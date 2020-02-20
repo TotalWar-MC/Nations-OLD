@@ -1,11 +1,23 @@
 package com.steffbeard.totalwar.nations.objects;
 
-import com.palmergames.bukkit.towny.object.Nation;
+import java.io.File;
 
 public class Alliance {
 	
-	private Nation nation;
-
+	public Alliance() {
+		File a = new File("alliances.yml");
+		
+		if(!a.exists()) {
+			try {
+				a.createNewFile();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
 	public boolean callAlly;
 	//TODO
 }

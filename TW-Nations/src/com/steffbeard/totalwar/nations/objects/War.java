@@ -1,15 +1,15 @@
 package com.steffbeard.totalwar.nations.objects;
 
 import com.palmergames.bukkit.towny.object.Nation;
-import com.steffbeard.totalwar.nations.Config;
+//import com.steffbeard.totalwar.nations.Config;
 
 public class War {
 	
 	protected Nation nation1, nation2;
 	protected Alliance alliance1, alliance2;
-	private Config config;
-	private int dpPerPlayer = config.dpPerPlayer;
-	private int dpPerPlot = config.dpPerPlot;
+	//private Config config;
+	//private int dpPerPlayer = config.dpPerPlayer;
+	//private int dpPerPlot = config.dpPerPlot;
 	
 	public War(Nation nat, Nation onat) {
 		nation1 = nat;
