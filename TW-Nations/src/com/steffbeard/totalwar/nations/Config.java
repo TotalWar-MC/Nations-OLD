@@ -11,14 +11,11 @@ public class Config extends Skyoconfig {
 	public int dpPerPlayer;
 	@ConfigOptions(name = "dp-per-plot.int")
 	public int dpPerPlot;
-	@ConfigOptions(name = "dp-per-mayor.int")
-	public int dpPerKing;
 	
 	
 	protected Config(final File dataFolder) {
         super(new File(dataFolder, "config.yml"), Arrays.asList("Nations configuration"));
         	this.dpPerPlayer = 1;
         	this.dpPerPlot = 3;
-        	this.dpPerKing = 10;
 	}
 }

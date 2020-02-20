@@ -10,7 +10,6 @@ import com.steffbeard.totalwar.nations.Config;
 
 public class Main extends JavaPlugin {
 
-	private Main plugin;
 	private static Config config;
 	
 	@Override
