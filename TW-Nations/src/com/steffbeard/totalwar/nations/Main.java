@@ -14,14 +14,21 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-	final File dataFolder = this.getDataFolder();
-    config = new Config(dataFolder);
-    try {
-        config.load();
-    }
-    catch (Exception e) {
-        e.printStackTrace();
-    }
+/*
+ *  Loads files such as 
+ *  config.yml
+ *  alliances.yml
+ *  
+ */
+	File a = new File("alliances.yml");
+
+	if(!a.exists()) {
+		try {
+			a.createNewFile();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
     
     public boolean onCommand(CommandSender sender, Command command, String label, String[] arges) {
