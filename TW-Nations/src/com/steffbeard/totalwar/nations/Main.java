@@ -14,12 +14,7 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-/*
- *  Loads files such as 
- *  config.yml
- *  alliances.yml
- *  
- */
+
 	File a = new File("alliances.yml");
 
 	if(!a.exists()) {
