@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.bukkit.towny.object.Town;
 import com.steffbeard.totalwar.nations.Main;
 
 /**
@@ -75,68 +74,4 @@ public class InviteHandler {
 		List<Invite> invites = sender.getSentInvites();
 		return invites.size();
 	}
-
-	public static int getSentAllyRequestsAmount(Nation sender) {
-		List<Invite> invites = sender.getSentAllyInvites();
-		return invites.size();
-	}
-
-	public static int getSentAllyRequestsMaxAmount(Nation sender) {
-		int amount = 0;
-		if (sender != null) {
-			if (NationsSettings.getMaximumRequestsSentNation() == 0){
-				amount = 100;
-			} else {
-				amount = NationsSettings.getMaximumRequestsSentNation();
-			}
-		}
-		return amount;
-	}
-
-	public static int getReceivedInvitesMaxAmount(NationsInviteReceiver receiver) {
-
-		int amount = 0;
-		if (receiver instanceof Resident) {
-			if (NationsSettings.getMaximumInvitesReceivedResident() == 0) {
-				amount = 100;
-			} else {
-				amount = NationsSettings.getMaximumInvitesReceivedResident();
-			}
-		}
-		if (receiver instanceof Town) {
-			if (NationsSettings.getMaximumInvitesReceivedTown() == 0) {
-				amount = 100;
-			} else {
-				amount = NationsSettings.getMaximumInvitesReceivedTown();
-			}
-		}
-		if (receiver instanceof Nation) {
-			if (NationsSettings.getMaximumRequestsReceivedNation() == 0) {
-				amount = 100;
-			} else {
-				amount = NationsSettings.getMaximumRequestsReceivedNation();
-			}
-		}
-		return amount;
-	}
-
-	public static int getSentInvitesMaxAmount(NationsInviteSender sender) {
-		int amount = 0;
-		if (sender instanceof Town) {
-			if (NationsSettings.getMaximumInvitesSentTown() == 0) {
-				amount = 100;
-			} else {
-				amount = NationsSettings.getMaximumInvitesSentTown();
-			}
-		}
-		if (sender instanceof Nation) {
-			if (NationsSettings.getMaximumInvitesSentNation() == 0) {
-				amount = 100;
-			} else {
-				amount = NationsSettings.getMaximumInvitesSentNation();
-			}
-		}
-		return amount;
-	}
-
 }

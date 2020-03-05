@@ -18,7 +18,7 @@ public interface Invite {
 	/**
 	 * @return - Resident, Town or Nation as a TownyEconomyObject.
 	 */
-	NationsReceiver getReceiver();
+	NationsInviteReceiver getReceiver();
 
 	/**
 	 * @return - Resident, Town or Nation as TownyEconomyObject.

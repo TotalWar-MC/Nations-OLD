@@ -1,8 +1,12 @@
 package com.steffbeard.totalwar.nations.objects;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+
 
 import com.palmergames.bukkit.towny.exceptions.AlreadyRegisteredException;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
@@ -10,41 +14,45 @@ import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.invites.exceptions.TooManyInvitesException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyObject;
+import com.palmergames.bukkit.util.BukkitTools;
+
 import com.steffbeard.totalwar.nations.Config;
+import com.steffbeard.totalwar.nations.Messages;
+import com.steffbeard.totalwar.nations.event.AllianceAddNationEvent;
+import com.steffbeard.totalwar.nations.event.AllianceRemoveNationEvent;
+import com.steffbeard.totalwar.nations.event.AllianceTagChangeEvent;
+import com.steffbeard.totalwar.nations.exceptions.EmptyAllianceException;
 import com.steffbeard.totalwar.nations.invites.Invite;
+import com.steffbeard.totalwar.nations.invites.InviteHandler;
 
 public class Alliance extends TownyObject {
 	
-	private List<Town> towns = new ArrayList<>();
-	private List<Alliance> allies = new ArrayList<>();
+	private List<Nation> nations = new ArrayList<>();
 	private List<Alliance> enemies = new ArrayList<>();
 	private Config config;
 	private Nation capital;
-	private double taxes, spawnCost;
-	private boolean neutral = false;
 	private String nationBoard = "/alliance set board [msg]";
 	private String tag = "";
 	public UUID uuid;
-	private long registered;
+	private long  registered;
 	private boolean isPublic = config.defaultPublic;
 	private boolean isOpen = config.defaultOpen;
 	private transient List<Invite> receivedinvites = new ArrayList<>();
 	private transient List<Invite> sentinvites = new ArrayList<>();
 	private transient List<Invite> sentallyinvites = new ArrayList<>();
 	
-	public Nation(String name) {
+	public Alliance(String name) {
 		super(name);
 	}
 
 	public void setTag(String text) throws TownyException {
 
 		if (text.length() > 4) {
-			throw new TownyException(TownySettings.getLangString("msg_err_tag_too_long"));
+			throw new TownyException(Messages.tag_too_long);
 		}
 		this.tag = text.toUpperCase().trim();
-		Bukkit.getPluginManager().callEvent(new NationTagChangeEvent(this.tag));
+		Bukkit.getPluginManager().callEvent(new AllianceTagChangeEvent(this.tag));
 	}
 
 	public String getTag() {
@@ -57,238 +65,91 @@ public class Alliance extends TownyObject {
 		return !tag.isEmpty();
 	}
 
-	public void addAlly(Nation nation) throws AlreadyRegisteredException {
+	public void addEnemy(Alliance alliance) throws AlreadyRegisteredException {
 
-		if (hasAlly(nation))
+		if (hasEnemy(alliance))
 			throw new AlreadyRegisteredException();
 		else {
-			try {
-				removeEnemy(nation);
-			} catch (NotRegisteredException ignored) {}
-			getAllies().add(nation);
-		}
-	}
-
-	public boolean removeAlly(Nation nation, Alliance alliance) throws NotRegisteredException {
-
-		if (!hasAlly(nation) && !hasAlly(alliance))
-			throw new NotRegisteredException();
-		else
-			return getAllies().remove(nation);
-			return getAllies().remove(alliance);
-	}
-
-	public boolean removeAllAllies() {
-
-		for (Alliance ally : new ArrayList<>(getAllies()))
-			try {
-				removeAlly(ally);
-				ally.removeAlly(this);
-			} catch (NotRegisteredException ignored) {}
-		return getAllies().size() == 0;
-	}
-
-	public boolean hasAlly(Nation nation) {
-
-		return getAllies().contains(nation);
-	}
-
-	public boolean IsAlliedWith(Nation nation) {
-
-		return getAllies().contains(nation);
-	}
-
-	public void addEnemy(Nation nation) throws AlreadyRegisteredException {
-
-		if (hasEnemy(nation))
-			throw new AlreadyRegisteredException();
-		else {
-			try {
-				removeAlly(nation);
-			} catch (NotRegisteredException ignored) {}
-			getEnemies().add(nation);
+			getEnemies().add(alliance);
 		}
 
 	}
 
-	public boolean removeEnemy(Nation nation) throws NotRegisteredException {
+	public boolean removeEnemy(Alliance alliance) throws NotRegisteredException {
 
-		if (!hasEnemy(nation))
+		if (!hasEnemy(alliance))
 			throw new NotRegisteredException();
 		else
-			return getEnemies().remove(nation);
+			return getEnemies().remove(alliance);
 	}
 
 	public boolean removeAllEnemies() {
 
-		for (Nation enemy : new ArrayList<>(getEnemies()))
+		for (Alliance enemy : new ArrayList<>(getEnemies()))
 			try {
 				removeEnemy(enemy);
 				enemy.removeEnemy(this);
 			} catch (NotRegisteredException ignored) {}
-		return getAllies().size() == 0;
+		return getEnemies().size() == 0;
 	}
 
-	public boolean hasEnemy(Nation nation) {
+	public boolean hasEnemy(Alliance alliance) {
 
-		return getEnemies().contains(nation);
+		return getEnemies().contains(alliance);
 	}
 
-	public List<Town> getTowns() {
+	public List<Nation> getNations() {
 
-		return towns;
+		return nations;
 	}
 
-	public boolean isKing(Resident resident) {
+//	public boolean isLeader(Resident resident) {
 
-		return hasCapital() && getCapital().isMayor(resident);
+	//	return hasCapital() && getCapital().isMayor(resident);
+//	}
+
+	public boolean hasKing(Resident resident) {
+
+		return getKings().contains(resident);
 	}
 
-	public boolean hasCapital() {
+	public boolean hasNation(String name) {
 
-		return getCapital() != null;
-	}
-
-	public boolean hasAssistant(Resident resident) {
-
-		return getAssistants().contains(resident);
-	}
-
-	public boolean isCapital(Town town) {
-
-		return town == getCapital();
-	}
-
-	public boolean hasTown(String name) {
-
-		for (Town town : towns)
-			if (town.getName().equalsIgnoreCase(name))
+		for (Nation nation : nations)
+			if (nation.getName().equalsIgnoreCase(name))
 				return true;
 		return false;
 	}
 
-	public boolean hasTown(Town town) {
+	public boolean hasNation(Nation nation) {
 
-		return towns.contains(town);
+		return nations.contains(nation);
 	}
 
-	public void addTown(Town town) throws AlreadyRegisteredException {
+	public void addNation(Nation nation) throws AlreadyRegisteredException {
 
-		if (hasTown(town))
+		if (hasNation(nation))
 			throw new AlreadyRegisteredException();
-		else if (town.hasNation())
+		else if (nation.hasAlliance())
 			throw new AlreadyRegisteredException();
 		else {
-			towns.add(town);
-			town.setNation(this);
+			nations.add(nation);
+			nation.setAlliance(this);
 			
-			BukkitTools.getPluginManager().callEvent(new NationAddTownEvent(town, this));
+			BukkitTools.getPluginManager().callEvent(new AllianceAddNationEvent(nation, this));
 		}
 	}
 
-	public void setCapital(Town capital) {
-
-		this.capital = capital;
-		try {
-			recheckTownDistance();
-			TownyPerms.assignPermissions(capital.getMayor(), null);
-		} catch (Exception e) {
-			// Dummy catch to prevent errors on startup when setting nation.
-		}
-	}
-
-	public Town getCapital() {
-
-		return capital;
-	}
-
-	public Location getNationSpawn() throws TownyException {
-		if(nationSpawn == null){
-			throw new TownyException(TownySettings.getLangString("msg_err_nation_has_not_set_a_spawn_location"));
-		}
-
-		return nationSpawn;
-	}
-
-	public boolean hasNationSpawn(){
-		return (nationSpawn != null);
-	}
-
-	public void setNationSpawn(Location spawn) throws TownyException {
-		Coord spawnBlock = Coord.parseCoord(spawn);
-		TownBlock townBlock;
-		TownyWorld world = TownyUniverse.getInstance().getDataSource().getWorld(spawn.getWorld().getName()); 
-		if (world.hasTownBlock(spawnBlock))
-			townBlock = world.getTownBlock(spawnBlock);
-		else 
-			throw new TownyException(String.format(TownySettings.getLangString("msg_cache_block_error_wild"), "set spawn"));
-
-		if(TownySettings.getBoolean(ConfigNodes.GNATION_SETTINGS_CAPITAL_SPAWN)){
-			if(this.capital == null){
-				throw new TownyException(TownySettings.getLangString("msg_err_spawn_not_within_capital"));
-			}
-			if(!townBlock.hasTown()){
-				throw new TownyException(TownySettings.getLangString("msg_err_spawn_not_within_capital"));
-			}
-			if(townBlock.getTown() != this.getCapital()){
-				throw new TownyException(TownySettings.getLangString("msg_err_spawn_not_within_capital"));
-			}
-		} else {
-			if(!townBlock.hasTown()){
-				throw new TownyException(TownySettings.getLangString("msg_err_spawn_not_within_nationtowns"));
-			}
-
-			if(!towns.contains(townBlock.getTown())){
-				throw new TownyException(TownySettings.getLangString("msg_err_spawn_not_within_nationtowns"));
-			}
-		}
-
-		this.nationSpawn = spawn;
-	}
-
-	/**
-	 * Only to be called from the Loading methods.
-	 *
-	 * @param nationSpawn - Location to set as Nation Spawn
-	 */
-	public void forceSetNationSpawn(Location nationSpawn){
-		this.nationSpawn = nationSpawn;
-	}
-
-	//TODO: Remove
 	public boolean setAllegiance(String type, Nation nation, Alliance alliance) {
 
 		try {
-			if (type.equalsIgnoreCase("ally")) {
-				removeEnemy(nation);
-				addAlly(nation);
-				if (!hasEnemy(nation) && hasAlly(nation))
-					return true;
-			} else if (type.equalsIgnoreCase("peaceful") || type.equalsIgnoreCase("neutral")) {
-				removeEnemy(nation);
-				removeAlly(nation);
-				if (!hasEnemy(nation) && !hasAlly(nation))
+			if (type.equalsIgnoreCase("truce") || type.equalsIgnoreCase("neutral")) {
+				removeEnemy(alliance);
+				if (!hasEnemy(alliance))
 					return true;
 			} else if (type.equalsIgnoreCase("enemy")) {
-				removeAlly(nation);
-				addEnemy(nation);
-				if (hasEnemy(nation) && !hasAlly(nation))
-					return true;
-			}
-			if (type.equalsIgnoreCase("ally")) {
-				removeEnemy(alliance);
-				addAlly(alliance));
-				if (!hasEnemy(nation) && hasAlly(alliance))
-					return true;
-			} else if (type.equalsIgnoreCase("peaceful") || type.equalsIgnoreCase("neutral")) {
-				removeEnemy(alliance);
-				removeAlly(alliance);
-				if (!hasEnemy(alliance) && !hasAlly(alliance))
-					return true;
-			} else if (type.equalsIgnoreCase("enemy")) {
-				removeAlly(alliance);
 				addEnemy(alliance);
-				if (hasEnemy(alliance) && !hasAlly(alliance))
+				if (hasEnemy(alliance))
 					return true;
 			}
 		} catch (AlreadyRegisteredException | NotRegisteredException x) {
@@ -298,80 +159,47 @@ public class Alliance extends TownyObject {
 		return false;
 	}
 
-	public List<Resident> getAssistants() {
+	public List<Resident> getKings() {
 
-		List<Resident> assistants = new ArrayList<>();
+		List<Resident> kings = new ArrayList<>();
 		
-		for (Town town: towns)
-		for (Resident assistant: town.getResidents()) {
-			if (assistant.hasNationRank("assistant"))
-				assistants.add(assistant);
+		for (Nation nation: nations)
+		for (Resident king: nation.getResidents()) {
+			if (king.hasNationRank("king"))
+				kings.add(king);
 		}
-		return assistants;
+		return kings;
 	}
 
 	public void setEnemies(List<Alliance> enemies) {
 
 		this.enemies = enemies;
 	}
-
 	public List<Alliance> getEnemies() {
 
 		return enemies;
 	}
 
-	public void setAllies(List<Alliance> allies) {
+	public int getNumNations() {
 
-		this.allies = allies;
+		return nations.size();
 	}
 
-	public List<Alliance> getAllies() {
+	public void removeAlliance(Nation nation) throws EmptyAllianceException, NotRegisteredException {
 
-		return allies;
-	}
-
-	public int getNumTowns() {
-
-		return towns.size();
-	}
-
-	public int getNumResidents() {
-
-		int numResidents = 0;
-		for (Town town : getTowns())
-			numResidents += town.getNumResidents();
-		return numResidents;
-	}
-
-	public void removeNation(Nation nation) throws EmptyNationException, NotRegisteredException {
-
-		if (!hasNation(nation))
+		if (!hasNation(nation)) {
 			throw new NotRegisteredException();
-		else {
+		} else {
 
-			boolean isCapital = nation.isCapital();
-			remove(nation));
+			remove(nation);
 
-			if (getNumTowns() == 0) {
+			if (getNumNations() == 0) {
 				throw new EmptyAllianceException(this);
-			} else if (isCapital) {
-				int numResidents = 0;
-				Nation tempCapital = null;
-				for (Nation newCapital : getNations())
-					if (newCapital.getNumResidents() > numResidents) {
-						tempCapital = newCapital;
-						numResidents = newCapital.getNumResidents();
-					}
-
-				if (tempCapital != null) {
-					setCapital(tempCapital);
-				}
-
 			}
 		}
 	}
 
-	private void remove(Nation nation) {
+	private void removeNation(Nation nation) {
 
 		//removeAssistantsIn(town);
 		try {
@@ -379,24 +207,22 @@ public class Alliance extends TownyObject {
 		} catch (AlreadyRegisteredException ignored) {
 		}
 		
-		nation.remove(nation);
+		nation.removeNation(nation);
 		
-		BukkitTools.getPluginManager().callEvent(new NationRemoveTownEvent(town, this));
+		BukkitTools.getPluginManager().callEvent(new AllianceRemoveNationEvent(nation, this));
 	}
 
 	private void removeAllNations() {
 
 		for (Nation nation : new ArrayList<>(nations))
-			remove(nation);
+			removeNation(nation);
 	}
 
 	public void clear() {
 
 		//TODO: Check cleanup
-		removeAllAllies();
 		removeAllEnemies();
-		removeAllTowns();
-		capital = null;
+		removeAllNations();
 	}
 
 	/**
@@ -434,30 +260,18 @@ public class Alliance extends TownyObject {
 	public List<String> getTreeString(int depth) {
 
 		List<String> out = new ArrayList<>();
-		out.add(getTreeDepth(depth) + "Nation (" + getName() + ")");
-		out.add(getTreeDepth(depth + 1) + "Capital: " + getCapital().getName());
+		out.add(getTreeDepth(depth) + "Alliance (" + getName() + ")");
 		
-		List<Resident> assistants = getAssistants();
+		List<Resident> kings = getKings();
 		
-		if (assistants.size() > 0)
-			out.add(getTreeDepth(depth + 1) + "Assistants (" + assistants.size() + "): " + Arrays.toString(assistants.toArray(new Resident[0])));
-		if (getAllies().size() > 0)
-			out.add(getTreeDepth(depth + 1) + "Allies (" + getAllies().size() + "): " + Arrays.toString(getAllies().toArray(new Nation[0])));
+		if (kings.size() > 0)
+			out.add(getTreeDepth(depth + 1) + "Leaders (" + kings.size() + "): " + Arrays.toString(kings.toArray(new Resident[0])));
 		if (getEnemies().size() > 0)
 			out.add(getTreeDepth(depth + 1) + "Enemies (" + getEnemies().size() + "): " + Arrays.toString(getEnemies().toArray(new Nation[0])));
-		out.add(getTreeDepth(depth + 1) + "Towns (" + getTowns().size() + "):");
-		for (Town town : getTowns())
+		out.add(getTreeDepth(depth + 1) + "Nations (" + getNations().size() + "):");
+		for (Town town : getNations())
 			out.addAll(town.getTreeString(depth + 2));
 		return out;
-	}
-
-	@Override
-	public boolean hasResident(String name) {
-
-		for (Town town : getTowns())
-			if (town.hasResident(name))
-				return true;
-		return false;
 	}
 
 	@Override
