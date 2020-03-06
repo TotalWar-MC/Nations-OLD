@@ -232,17 +232,16 @@ public class Alliance extends TownyObject {
 
 	public boolean hasResident(Resident resident) {
 		
-		for (Town town : getTowns())
-			if (town.hasResident(resident))
+		for (Nation nation : getNations())
+			if (((Nation) nation.getTowns()).hasResident(resident));
 				return true;
-		return false;
 	}
 
 	public List<Resident> getResidents() {
 
 		List<Resident> out = new ArrayList<>();
-		for (Town town : getTowns())
-			out.addAll(town.getResidents());
+		for (Nation nation : getNations())
+			out.addAll(((Nation) nation.getTowns()).getResidents());
 		return out;
 	}
 
@@ -268,7 +267,7 @@ public class Alliance extends TownyObject {
 	public List<Resident> getOutlaws() {
 
 		List<Resident> out = new ArrayList<>();
-		for (Town town : getTowns())
+		for (Town town : getNations())
 			out.addAll(town.getOutlaws());
 		return out;
 	}
