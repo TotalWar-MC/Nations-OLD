@@ -74,7 +74,7 @@ public class Main extends JavaPlugin {
     private DataAccessor blockdata;
     private GriefManager gm;
     public static TownyUniverse tUniverse;
-    public static Towny towny;
+    public Towny towny;
     public static boolean isBossBar = false;
     
     private Set<SBlock> blocksBroken = new HashSet<SBlock>();

@@ -195,8 +195,8 @@ public class GriefListener implements Listener {
 				}else{
 					event.setBuild(true);
 					event.setCancelled(false);
-					Towny plugin = plugin.towny;
-					if (plugin.isError()) {
+					Towny towny = plugin.towny;
+					if (towny.isError()) {
 						event.setCancelled(true);
 						return;
 					}
@@ -217,7 +217,7 @@ public class GriefListener implements Listener {
 						/*
 						 * Fetch the players cache
 						 */
-						PlayerCache cache = plugin.getCache(player);
+						PlayerCache cache = towny.getCache(player);
 						TownBlockStatus status = cache.getStatus();
 
 						/*
@@ -226,7 +226,7 @@ public class GriefListener implements Listener {
 						if (((status == TownBlockStatus.ENEMY) && TownyWarConfig.isAllowingAttacks()) && (event.getBlock().getType() == TownyWarConfig.getFlagBaseMaterial())) {
 
 							try {
-								if (TownyWar.callAttackCellEvent(plugin, player, block, worldCoord))
+								if (TownyWar.callAttackCellEvent(towny, player, block, worldCoord))
 									return;
 							} catch (TownyException e) {
 								TownyMessaging.sendErrorMsg(player, e.getMessage());
@@ -289,7 +289,7 @@ public class GriefListener implements Listener {
 		}
 	}
 	
-	@SuppressWarnings({ "deprecation" })
+	@SuppressWarnings({ })
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = false)
 	public void onExplode(EntityExplodeEvent ev) {
 		ev.setCancelled(false);
