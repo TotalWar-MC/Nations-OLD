@@ -3,16 +3,22 @@ package com.steffbeard.totalwar.nations;
 import java.io.File;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.steffbeard.totalwar.nations.listeners.EnemyWalkWWar;
+import com.steffbeard.totalwar.nations.listeners.GriefListener;
+import com.steffbeard.totalwar.nations.listeners.NationWalkEvent;
 import com.steffbeard.totalwar.nations.listeners.PlayerListener;
+import com.steffbeard.totalwar.nations.listeners.PvPListener;
+import com.steffbeard.totalwar.nations.listeners.WarListener;
 import com.steffbeard.totalwar.nations.Messages;
 import com.steffbeard.totalwar.nations.data.Alliances;
+
+import com.palmergames.bukkit.towny.Towny;
+import com.palmergames.bukkit.towny.object.TownyUniverse;
 import com.steffbeard.totalwar.nations.Config;
 
 public class Main extends JavaPlugin {
@@ -21,11 +27,9 @@ public class Main extends JavaPlugin {
 	protected Config config;
     protected Messages messages;
     protected Alliances alliances;
-   
-	public Main() {
-		new PlayerListener(this);
-	}
-	
+    public static TownyUniverse tUniverse;
+    public static Towny towny;
+    
 	@Override
 	public void onEnable() {
 		final File dataFolder = this.getDataFolder();
@@ -55,13 +59,11 @@ public class Main extends JavaPlugin {
          */
         final PluginManager manager = Bukkit.getPluginManager();
         manager.registerEvents((Listener)new PlayerListener(plugin), (Plugin)this);
-	}
-    /*
-     * Commands
-     */
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] arges) {
-		return false;
-	
+        manager.registerEvents((Listener)new GriefListener(plugin, null), (Plugin)this);
+        manager.registerEvents((Listener)new WarListener(), (Plugin)this);
+        manager.registerEvents((Listener)new PvPListener(), (Plugin)this);
+        manager.registerEvents((Listener)new NationWalkEvent(), (Plugin)this);
+        manager.registerEvents((Listener)new EnemyWalkWWar(), (Plugin)this);
 	}
 
 }

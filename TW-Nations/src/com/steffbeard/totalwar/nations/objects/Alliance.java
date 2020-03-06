@@ -14,6 +14,7 @@ import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.invites.exceptions.TooManyInvitesException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
+import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyObject;
 import com.palmergames.bukkit.util.BukkitTools;
 
@@ -25,6 +26,7 @@ import com.steffbeard.totalwar.nations.event.AllianceTagChangeEvent;
 import com.steffbeard.totalwar.nations.exceptions.EmptyAllianceException;
 import com.steffbeard.totalwar.nations.invites.Invite;
 import com.steffbeard.totalwar.nations.invites.InviteHandler;
+import com.steffbeard.totalwar.nations.utils.NationUtils;
 
 public class Alliance extends TownyObject {
 	
@@ -43,7 +45,7 @@ public class Alliance extends TownyObject {
 	private transient List<Invite> sentallyinvites = new ArrayList<>();
 	
 	public Alliance(String name) {
-		super(name);
+		super();
 	}
 
 	public void setTag(String text) throws TownyException {
@@ -126,7 +128,7 @@ public class Alliance extends TownyObject {
 		return nations.contains(nation);
 	}
 
-	public void addNation(Nation nation) throws AlreadyRegisteredException {
+	public void addNation(NationUtils nation) throws AlreadyRegisteredException {
 
 		if (hasNation(nation))
 			throw new AlreadyRegisteredException();
@@ -199,7 +201,7 @@ public class Alliance extends TownyObject {
 		}
 	}
 
-	private void removeNation(Nation nation) {
+	private void remove(NationUtils nation) {
 
 		//removeAssistantsIn(town);
 		try {
@@ -207,7 +209,7 @@ public class Alliance extends TownyObject {
 		} catch (AlreadyRegisteredException ignored) {
 		}
 		
-		nation.removeNation(nation);
+		nation.remove(nation);
 		
 		BukkitTools.getPluginManager().callEvent(new AllianceRemoveNationEvent(nation, this));
 	}
@@ -225,22 +227,8 @@ public class Alliance extends TownyObject {
 		removeAllNations();
 	}
 
-	/**
-	 * Method for rechecking town distances to a new nation capital/moved nation capital homeblock.
-	 * @throws TownyException - Generic TownyException
-	 */
-
-	public void setKing(Resident king) throws TownyException {
-
-		if (!hasResident(king))
-			throw new TownyException(TownySettings.getLangString("msg_err_king_not_in_nation"));
-		if (!king.isMayor())
-			throw new TownyException(TownySettings.getLangString("msg_err_new_king_notmayor"));
-		setCapital(king.getTown());
-	}
-
 	public boolean hasResident(Resident resident) {
-
+		
 		for (Town town : getTowns())
 			if (town.hasResident(resident))
 				return true;
@@ -269,8 +257,8 @@ public class Alliance extends TownyObject {
 		if (getEnemies().size() > 0)
 			out.add(getTreeDepth(depth + 1) + "Enemies (" + getEnemies().size() + "): " + Arrays.toString(getEnemies().toArray(new Nation[0])));
 		out.add(getTreeDepth(depth + 1) + "Nations (" + getNations().size() + "):");
-		for (Town town : getNations())
-			out.addAll(town.getTreeString(depth + 2));
+		for (Nation nation : getNations())
+			out.addAll(nation.getTreeString(depth + 2));
 		return out;
 	}
 
@@ -303,40 +291,34 @@ public class Alliance extends TownyObject {
 		this.registered = registered;
 	}
 
-	@Override
 	public List<Invite> getReceivedInvites() {
 		return receivedinvites;
 	}
 
-	@Override
 	public void newReceivedInvite(Invite invite) throws TooManyInvitesException {
 		if (receivedinvites.size() <= (InviteHandler.getReceivedInvitesMaxAmount(this) -1)) {
 			receivedinvites.add(invite);
 		} else {
-			throw new TooManyInvitesException(String.format(TownySettings.getLangString("msg_err_nation_has_too_many_requests"),this.getName()));
+			throw new TooManyInvitesException();
 		}
 	}
 
-	@Override
 	public void deleteReceivedInvite(Invite invite) {
 		receivedinvites.remove(invite);
 	}
 
-	@Override
 	public List<Invite> getSentInvites() {
 		return sentinvites;
 	}
 
-	@Override
 	public void newSentInvite(Invite invite) throws TooManyInvitesException {
 		if (sentinvites.size() <= (InviteHandler.getSentInvitesMaxAmount(this) -1)) {
 			sentinvites.add(invite);
 		} else {
-			throw new TooManyInvitesException(TownySettings.getLangString("msg_err_nation_sent_too_many_invites"));
+			throw new TooManyInvitesException();
 		}
 	}
 
-	@Override
 	public void deleteSentInvite(Invite invite) {
 		sentinvites.remove(invite);
 	}
@@ -345,7 +327,7 @@ public class Alliance extends TownyObject {
 		if (sentallyinvites.size() <= InviteHandler.getSentAllyRequestsMaxAmount(this) -1) {
 			sentallyinvites.add(invite);
 		} else {
-			throw new TooManyInvitesException(TownySettings.getLangString("msg_err_nation_sent_too_many_requests"));
+			throw new TooManyInvitesException();
 		}
 	}
 	
@@ -385,28 +367,6 @@ public class Alliance extends TownyObject {
     	
     	return isOpen;
     }
-    
-	public void setSpawnCost(double spawnCost) {
-
-		this.spawnCost = spawnCost;
-	}
-
-	public double getSpawnCost() {
-
-		return spawnCost;
-	}
-	
-	public int getNumTownblocks() {
-		int townBlocksClaimed = 0;
-		for (Town towns : this.getTowns()) {
-			townBlocksClaimed = townBlocksClaimed + towns.getTownBlocks().size();
-		}
-		return townBlocksClaimed;
-	}
-	
-	public Resident getKing() {
-		return capital.getMayor();
-	}
 
 	@Override
 	public String getFormattedName() {
