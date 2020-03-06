@@ -81,6 +81,7 @@ public class Main extends JavaPlugin {
     private Set<Material> banList = new HashSet<Material>();
     
     public static HashMap<Chunk, List<Location>> wallBlocks = new HashMap<Chunk, List<Location>>();
+    public static List<String> messagedPlayers = new ArrayList<String>();
     public Map<String, ResidentUtils> allResidents = new HashMap<String, ResidentUtils>();
     
     //set up the date conversion spec and the character set for file writing

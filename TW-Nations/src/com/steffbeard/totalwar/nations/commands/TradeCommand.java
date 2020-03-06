@@ -53,7 +53,7 @@ public class TradeCommand implements CommandExecutor {
         switch (args[0]){
             case "request":
                 if(args.length < 2){
-                    player.sendMessage("§cSpecify a town you want to trade with!");
+                    player.sendMessage(ChatColor.RED + "Specify a town you want to trade with!");
                     return;
                 }
                 String townName = args[0];

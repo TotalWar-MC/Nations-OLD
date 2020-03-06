@@ -1,6 +1,5 @@
 package com.steffbeard.totalwar.nations.tasks;
 
-import java.awt.*;
 import java.text.DecimalFormat;
 
 import com.steffbeard.totalwar.core.FancyMessage;
@@ -58,7 +57,7 @@ public class AttackWarnBarTask extends BukkitRunnable{
 						if(wwar != null && !((Double)(War.getTownMaxPoints(town))).equals(null)){
 							try {
 								percent = (float)((wwar.getTownPoints(town)/((Double)War.getTownMaxPoints(town)).intValue()));
-								if(plugin.isBossBar){
+								if(Main.isBossBar){
 									if(percent!=0f){
 										if(BossBarAPI.hasBar(player)){
 											BossBarAPI.removeAllBars(player);
@@ -98,7 +97,7 @@ public class AttackWarnBarTask extends BukkitRunnable{
 		String points = "";
 		final String name = player.getName();
 		
-		if (plugin.messagedPlayers.contains(name))
+		if (Main.messagedPlayers.contains(name))
 		{
 			try {
 				points = ChatColor.RED + "" + ChatColor.BOLD + town.getName() + ChatColor.DARK_RED + " is Under Attack!";
@@ -124,12 +123,12 @@ public class AttackWarnBarTask extends BukkitRunnable{
 			player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 10);
 		}
 		
-		if (!plugin.messagedPlayers.contains(name)) {
-			plugin.messagedPlayers.add(name);
+		if (!Main.messagedPlayers.contains(name)) {
+			Main.messagedPlayers.add(name);
 			
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 				  public void run() {
-				      plugin.messagedPlayers.remove(name);
+				      Main.messagedPlayers.remove(name);
 				  }
 				}, 3 * 60 * 20);
 			try {
