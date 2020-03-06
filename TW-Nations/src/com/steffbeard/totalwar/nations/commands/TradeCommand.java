@@ -23,6 +23,13 @@ import java.io.IOException;
 
 public class TradeCommand implements CommandExecutor {
 
+	/*
+	 * TODO:
+	 * Add support for Postal and Citizens2
+	 * to spawn NPC caravans to travel between pickup and dropoff
+	 * locations instead of current system
+	 */
+	
 	private Main plugin;
     private TradeFile tf = plugin.getInstance().getTradeFile();
     private FileConfiguration tc = tf.getYamlConfiguration();
