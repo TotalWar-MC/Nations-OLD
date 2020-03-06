@@ -28,9 +28,8 @@ import com.steffbeard.totalwar.nations.managers.GriefManager;
 import com.steffbeard.totalwar.nations.managers.WarManager;
 import com.steffbeard.totalwar.nations.objects.War;
 import com.steffbeard.totalwar.nations.tasks.AttackWarnBarTask;
-
-import me.drkmatr1984.BlocksAPI.utils.SBlock;
-import me.drkmatr1984.BlocksAPI.utils.Utils;
+import com.steffbeard.totalwar.nations.utils.BlockUtils;
+import com.steffbeard.totalwar.nations.utils.SBlock;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -71,7 +70,7 @@ public class GriefListener implements Listener {
 	//during war
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
 	public void onWarTownDamage(BlockBreakEvent event){
-		if(config.allowGriefing){
+		if(Config.allowGriefing){
 			Block block = event.getBlock();
 			if(config.worldBlackList!=(null))
 				if(config.worldBlackList.contains(block.getWorld().getName().toString().toLowerCase())){
@@ -138,15 +137,15 @@ public class GriefListener implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void suppressTownyBuildEvent(BlockPlaceEvent event) {
-		if(config.allowGriefing){
+		if(Config.allowGriefing){
 			event.setCancelled(true);
 		}
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "deprecation" })
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = false)
 	public void onWarBuild(BlockPlaceEvent event) {
-		if(config.allowGriefing){
+		if(Config.allowGriefing){
 			Block block = event.getBlock();
 			if(event.getPlayer()!=null){		
 				Player p = event.getPlayer();
@@ -269,8 +268,8 @@ public class GriefListener implements Listener {
 		TownBlock townBlock = null;
 		townBlock = TownyUniverse.getTownBlock(center);
 		if(townBlock!=null){
-			if(config.allowGriefing){
-				if(config.warExplosions){
+			if(Config.allowGriefing){
+				if(Config.warExplosions){
 					if(townBlock.hasTown()){
 						try {
 							if(townBlock.getTown().hasNation()){
@@ -301,8 +300,8 @@ public class GriefListener implements Listener {
 		if(p!=null){
 			p.sendMessage(ev.getEntityType().toString());
 		}
-		if(config.allowGriefing){
-			if(config.warExplosions){
+		if(Config.allowGriefing){
+			if(Config.warExplosions){
 				try{
 					townBlock = TownyUniverse.getTownBlock(center);
 					if(townBlock!=null){
@@ -582,7 +581,7 @@ public class GriefListener implements Listener {
 				}
 			}
 		}
-		if(Utils.isOtherAttachable((block.getRelative(BlockFace.UP)).getType())){
+		if(BlockUtils.isOtherAttachable((block.getRelative(BlockFace.UP)).getType())){
 			check = new SBlock(block.getRelative(BlockFace.UP));
 			if(!containsBlock(sBlocks, check)){
 				if(entity!=null){

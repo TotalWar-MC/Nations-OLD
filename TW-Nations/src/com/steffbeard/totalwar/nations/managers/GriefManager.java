@@ -20,12 +20,13 @@ import org.bukkit.material.PistonExtensionMaterial;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
-import com.steffbeard.totalwar.nations.Main;
 
-import me.drkmatr1984.BlocksAPI.tasks.DelayedRegenTask;
-import me.drkmatr1984.BlocksAPI.utils.BlockSerialization;
-import me.drkmatr1984.BlocksAPI.utils.SBlock;
-import me.drkmatr1984.BlocksAPI.utils.Utils;
+import com.steffbeard.totalwar.nations.Main;
+import com.steffbeard.totalwar.nations.listeners.GriefListener;
+import com.steffbeard.totalwar.nations.tasks.DelayedRegenTask;
+import com.steffbeard.totalwar.nations.utils.BlockSerialization;
+import com.steffbeard.totalwar.nations.utils.BlockUtils;
+import com.steffbeard.totalwar.nations.utils.SBlock;
 
 //Make into a class that stores the blocks in data files per town among other uses
 public class GriefManager {
@@ -150,10 +151,10 @@ public class GriefManager {
     		Material mat = Material.valueOf(sb.mat);
     		bl.setTypeIdAndData(mat.getId(), sb.data, true);
     		BlockState blockState = bl.getState();
-    		/*if(Utils.isOtherAttachable(mat) || mat.equals(Material.CACTUS) || mat.equals(Material.SUGAR_CANE_BLOCK) || blockState.getData() instanceof PistonExtensionMaterial || blockState instanceof Attachable){
+    		/*if(BlockUtils.isOtherAttachable(mat) || mat.equals(Material.CACTUS) || mat.equals(Material.SUGAR_CANE_BLOCK) || blockState.getData() instanceof PistonExtensionMaterial || blockState instanceof Attachable){
     			new DelayedRegenTask(sb).runTaskLater(plugin, delay+20);*/
 
-    		if(Utils.isOtherAttachable(mat) || mat.equals(Material.CACTUS) || mat.equals(Material.SUGAR_CANE_BLOCK) || blockState.getData() instanceof PistonExtensionMaterial || blockState instanceof Attachable){
+    		if(BlockUtils.isOtherAttachable(mat) || mat.equals(Material.CACTUS) || mat.equals(Material.SUGAR_CANE_BLOCK) || blockState.getData() instanceof PistonExtensionMaterial || blockState instanceof Attachable){
     			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
       			  public void run() {
       				  //Bukkit.getServer().broadcastMessage("Area 1");

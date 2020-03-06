@@ -21,10 +21,8 @@ import com.steffbeard.totalwar.nations.managers.WarManager;
 
 public class Explode {
 	
-	private Config config;
-	
 	@SuppressWarnings("deprecation")
-	public void explode(Entity ent, List<Block> blocks, Location center, int DEBRIS_CHANCE){
+	public static void explode(Entity ent, List<Block> blocks, Location center, int DEBRIS_CHANCE){
 		
 		float yield = 3.0f;
 		
@@ -64,8 +62,8 @@ public class Explode {
 				debris.setVelocity(vec);			
 			}
 			if(townBlock!=null){
-				if(config.allowGriefing){
-					if(config.warExplosions){
+				if(Config.allowGriefing){
+					if(Config.warExplosions){
 						if(townBlock.hasTown()){
 							try {
 								if(townBlock.getTown().hasNation()){

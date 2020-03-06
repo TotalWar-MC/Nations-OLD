@@ -3,6 +3,10 @@ package com.steffbeard.totalwar.nations.listeners;
 import com.palmergames.bukkit.towny.event.PlayerChangePlotEvent;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.*;
+
+import com.steffbeard.totalwar.nations.managers.WarManager;
+import com.steffbeard.totalwar.nations.utils.Title;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

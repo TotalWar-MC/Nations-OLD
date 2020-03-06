@@ -5,6 +5,8 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
+import com.steffbeard.totalwar.nations.Config;
+import com.steffbeard.totalwar.nations.managers.WarManager;
 
 //import java.io.DataInputStream;
 //import java.io.DataOutputStream;
@@ -23,6 +25,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class War {
+	
 	private Nation nation1, nation2;
 	private int nation1points, nation2points;
 	private Map<Town, Double> towns = new HashMap<Town, Double>();
@@ -169,7 +172,7 @@ public class War {
 	
 	public static double getTownMaxPoints(Town town){
 		return (town.getNumResidents()
-				* TownyWars.pPlayer) + (TownyWars.pPlot
+				* Config.pPlayer) + (Config.pPlot
 				* town.getTownBlocks().size());
 	}
 
@@ -287,11 +290,10 @@ public class War {
 			nation2points++;
 		towns.put(town,
 				(town.getNumResidents()
-						* TownyWars.pPlayer + TownyWars.pPlot
+						* Config.pPlayer + Config.pPlot
 						* town.getTownBlocks().size()));
 	}
 
-	@SuppressWarnings("deprecation")
 	public static void broadcast(Nation n, String message) {
 		for (Resident re : n.getResidents()) {
 			Player plr = Bukkit.getPlayer(re.getName());

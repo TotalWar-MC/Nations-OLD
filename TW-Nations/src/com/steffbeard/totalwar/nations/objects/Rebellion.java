@@ -3,8 +3,6 @@ package com.steffbeard.totalwar.nations.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-//import main.java.com.danielrharris.townywars.War.MutableInteger;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -16,6 +14,8 @@ import com.palmergames.bukkit.towny.exceptions.TownyException;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
+
+import com.steffbeard.totalwar.nations.managers.WarManager;
 
 //Author: Noxer
 public class Rebellion {

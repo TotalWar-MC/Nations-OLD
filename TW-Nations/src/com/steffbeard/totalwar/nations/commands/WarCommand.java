@@ -1,6 +1,5 @@
 package com.steffbeard.totalwar.nations.commands;
 
-
 import com.palmergames.bukkit.towny.exceptions.EconomyException;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Nation;
@@ -16,11 +15,10 @@ import com.steffbeard.totalwar.nations.managers.WarManager;
 import com.steffbeard.totalwar.nations.objects.Rebellion;
 import com.steffbeard.totalwar.nations.objects.War;
 import com.steffbeard.totalwar.nations.tasks.ShowDPTask;
+import com.steffbeard.totalwar.nations.utils.BlockUtils;
+import com.steffbeard.totalwar.nations.utils.SBlock;
 
-import me.drkmatr1984.BlocksAPI.utils.SBlock;
-import me.drkmatr1984.BlocksAPI.utils.Utils;
-
-import mkremins.fanciful.FancyMessage;
+import com.steffbeard.totalwar.core.FancyMessage;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -177,7 +175,7 @@ public class WarCommand implements CommandExecutor {
 					if(GriefListener.getGriefedBlocks()!=null){
 						if(!GriefListener.getGriefedBlocks().isEmpty()){
 							for(SBlock b : GriefListener.getGriefedBlocks().get(town)){
-								if(b.getType()!=Material.AIR && !Utils.isOtherAttachable(b.getType())){
+								if(b.getType()!=Material.AIR && !BlockUtils.isOtherAttachable(b.getType())){
 									numBlocks++;
 								}
 							}
@@ -251,7 +249,7 @@ public class WarCommand implements CommandExecutor {
     			town = re.getTown();
     			Double points = War.getTownMaxPoints(town);
     	    	String proper = d.format(points);
-    	    	if(config.isBossBar){
+    	    	if(Main.isBossBar){
     	    		new ShowDPTask(town, plugin).runTask(plugin);
     	    	}
     	    	cs.sendMessage(ChatColor.YELLOW + "Your town's max defense value is currently " +  proper + " defense points!");
@@ -284,7 +282,7 @@ public class WarCommand implements CommandExecutor {
     							points = wwar.getTownPoints(town);
     							if(points!=null){
     					    		String proper = d.format(points);
-    					    		if(config.isBossBar){
+    					    		if(Main.isBossBar){
     				    	    		new ShowDPTask(town, plugin).runTask(plugin);
     				    	    	}
     					        	cs.sendMessage(ChatColor.YELLOW + "Your town's defense value is currently " +  proper + " defense points!");
@@ -296,7 +294,7 @@ public class WarCommand implements CommandExecutor {
     							return true;
     						}
     					}else{
-    						if(config.isBossBar){
+    						if(Main.isBossBar){
     							points = War.getTownMaxPoints(town);
     			    	    	String proper = d.format(points);
     		    	    		new ShowDPTask(town, plugin).runTask(plugin);
@@ -972,7 +970,7 @@ private boolean showRebellion(CommandSender cs, String[] strings, boolean admin)
     WarManager.createWar(nat, onat, cs);
     try
     {
-      nat.collect(config.declareCost);
+      nat.collect(Config.declareCost);
     }
     catch (EconomyException ex)
     {

@@ -23,7 +23,8 @@ import java.io.IOException;
 
 public class TradeCommand implements CommandExecutor {
 
-    private TradeFile tf = Main.getInstance().getTradeFile();
+	private Main plugin;
+    private TradeFile tf = plugin.getInstance().getTradeFile();
     private FileConfiguration tc = tf.getYamlConfiguration();
 
     @Override

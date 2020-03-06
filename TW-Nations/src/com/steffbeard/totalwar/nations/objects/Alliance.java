@@ -19,6 +19,7 @@ import com.palmergames.bukkit.towny.object.TownyObject;
 import com.palmergames.bukkit.util.BukkitTools;
 
 import com.steffbeard.totalwar.nations.Config;
+import com.steffbeard.totalwar.nations.Main;
 import com.steffbeard.totalwar.nations.Messages;
 import com.steffbeard.totalwar.nations.event.AllianceAddNationEvent;
 import com.steffbeard.totalwar.nations.event.AllianceRemoveNationEvent;
@@ -29,6 +30,8 @@ import com.steffbeard.totalwar.nations.invites.InviteHandler;
 import com.steffbeard.totalwar.nations.utils.NationUtils;
 
 public class Alliance extends TownyObject {
+	
+	private Main plugin;
 	
 	private List<Nation> nations = new ArrayList<>();
 	private List<Alliance> enemies = new ArrayList<>();
@@ -235,7 +238,6 @@ public class Alliance extends TownyObject {
 		return false;
 	}
 
-	@Override
 	public List<Resident> getResidents() {
 
 		List<Resident> out = new ArrayList<>();
@@ -368,6 +370,11 @@ public class Alliance extends TownyObject {
     	return isOpen;
     }
 
+    /*
+     * TODO:
+     * Have to add MySQL support
+     */
+    
 	@Override
 	public String getFormattedName() {
 		return TownySettings.getNationPrefix(this) + this.getName().replaceAll("_", " ")
@@ -377,13 +384,13 @@ public class Alliance extends TownyObject {
 	public void addMetaData(CustomDataField md) {
 		super.addMetaData(md);
 
-		TownyUniverse.getInstance().getDataSource().saveNation(this);
+		plugin.getInstance().getDataSource().saveNation(this);
 	}
 
 	public void removeMetaData(CustomDataField md) {
 		super.removeMetaData(md);
 
-		TownyUniverse.getInstance().getDataSource().saveNation(this);
+		plugin.getInstance().getDataSource().saveNation(this);
 	}
 	
 }

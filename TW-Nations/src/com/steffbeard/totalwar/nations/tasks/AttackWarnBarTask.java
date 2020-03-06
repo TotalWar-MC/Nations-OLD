@@ -3,7 +3,8 @@ package com.steffbeard.totalwar.nations.tasks;
 import java.awt.*;
 import java.text.DecimalFormat;
 
-import mkremins.fanciful.FancyMessage;
+import com.steffbeard.totalwar.core.FancyMessage;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -17,6 +18,8 @@ import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.steffbeard.totalwar.nations.Main;
+import com.steffbeard.totalwar.nations.managers.WarManager;
+import com.steffbeard.totalwar.nations.objects.War;
 
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -55,7 +58,7 @@ public class AttackWarnBarTask extends BukkitRunnable{
 						if(wwar != null && !((Double)(War.getTownMaxPoints(town))).equals(null)){
 							try {
 								percent = (float)((wwar.getTownPoints(town)/((Double)War.getTownMaxPoints(town)).intValue()));
-								if(TownyWars.isBossBar){
+								if(plugin.isBossBar){
 									if(percent!=0f){
 										if(BossBarAPI.hasBar(player)){
 											BossBarAPI.removeAllBars(player);
@@ -95,7 +98,7 @@ public class AttackWarnBarTask extends BukkitRunnable{
 		String points = "";
 		final String name = player.getName();
 		
-		if (TownyWars.messagedPlayers.contains(name))
+		if (plugin.messagedPlayers.contains(name))
 		{
 			try {
 				points = ChatColor.RED + "" + ChatColor.BOLD + town.getName() + ChatColor.DARK_RED + " is Under Attack!";
@@ -121,13 +124,12 @@ public class AttackWarnBarTask extends BukkitRunnable{
 			player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 10, 10);
 		}
 		
-		if (!TownyWars.messagedPlayers.contains(name))
-		{
-			TownyWars.messagedPlayers.add(name);
+		if (!plugin.messagedPlayers.contains(name)) {
+			plugin.messagedPlayers.add(name);
 			
 			plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 				  public void run() {
-				      TownyWars.messagedPlayers.remove(name);
+				      plugin.messagedPlayers.remove(name);
 				  }
 				}, 3 * 60 * 20);
 			try {
@@ -150,7 +152,7 @@ public class AttackWarnBarTask extends BukkitRunnable{
 			    .color(ChatColor.DARK_RED)
 			    .style(ChatColor.ITALIC)
 			    .tooltip(points)
-			    .command("/twar showtowndp")
+			    .command("/war showtowndp")
 			.then("  ")
 			.then("g")
 				.color(ChatColor.WHITE)

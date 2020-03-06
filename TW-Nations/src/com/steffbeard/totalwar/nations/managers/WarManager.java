@@ -30,7 +30,13 @@ import org.bukkit.entity.Player;
 
 public class WarManager {
 
-  private Config config;
+	
+	/*
+	 * TODO:
+	 * Have to make it so you can declare war on alliances 
+	 * as well because currently can't declare war on nations 
+	 * already at war because of anti-combat log mechanics
+	 */
   private static String fileSeparator = System.getProperty("file.separator");
   private static Set<War> activeWars = new HashSet<War>();
   private static Set<String> requestedPeace = new HashSet<String>();
@@ -182,7 +188,7 @@ public class WarManager {
 	}
   }
   
-  public boolean requestPeace(Nation nat, Nation onat, boolean admin)
+  public static boolean requestPeace(Nation nat, Nation onat, boolean admin)
   {
 	  
     if ((admin) || (requestedPeace.contains(onat.getName())))
@@ -193,8 +199,8 @@ public class WarManager {
       
       try
       {
-        nat.collect(config.endCost);
-        onat.collect(config.endCost);
+        nat.collect(Config.endCost);
+        onat.collect(Config.endCost);
       }
       catch (EconomyException ex)
       {

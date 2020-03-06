@@ -27,6 +27,7 @@ public class PvPListener implements Listener{
 	private Main plugin;
 	private Config config;
 	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onPlayerDamage(EntityDamageByEntityEvent event){
 		// get the current system time
@@ -76,10 +77,10 @@ public class PvPListener implements Listener{
 			}
 		  
 			String playerName=((Player)event.getEntity()).getName();
-			if (plugin.getResidentUtils(playerName)!=null) {
+			if (plugin.getResident(playerName)!=null) {
 				// update the player's stats
-				plugin.getResidentUtils(playerName).setLastHitTime(hitTime);
-				plugin.getResidentUtils(playerName).setLastAttacker(attacker);
+				plugin.getResident(playerName).setLastHitTime(hitTime);
+				plugin.getResident(playerName).setLastAttacker(attacker);
 			}	  
 		}
 	}
@@ -107,7 +108,7 @@ public class PvPListener implements Listener{
 			// let's look up who hit them last, and how long ago
 			long lastHitTime=0;
 			String lastAttacker=null;
-			ResidentUtils cre= plugin.getResidentUtils(playerName);
+			ResidentUtils cre= plugin.getResident(playerName);
 			if (cre!=null){
 				lastHitTime=cre.getLastHitTime();
 				lastAttacker=cre.getLastAttacker();

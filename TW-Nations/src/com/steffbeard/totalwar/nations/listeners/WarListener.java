@@ -1,6 +1,5 @@
 package com.steffbeard.totalwar.nations.listeners;
 
-import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.event.DeleteNationEvent;
 import com.palmergames.bukkit.towny.event.NationAddTownEvent;
 import com.palmergames.bukkit.towny.event.NationRemoveTownEvent;
@@ -12,12 +11,12 @@ import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownyUniverse;
 
+import com.steffbeard.totalwar.nations.Config;
 import com.steffbeard.totalwar.nations.Main;
 import com.steffbeard.totalwar.nations.managers.WarManager;
 import com.steffbeard.totalwar.nations.objects.Rebellion;
 import com.steffbeard.totalwar.nations.objects.War;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +25,9 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class WarListener implements Listener {
+	
+	private Main plugin;
+	private Config config;
 	
 	@EventHandler
 	public void onNationDeleteAttempt(PlayerCommandPreprocessEvent event){	
@@ -119,8 +121,8 @@ public class WarListener implements Listener {
 			//Player plr = Bukkit.getPlayer(re.getName());
       
 			// add the player to the master list if they don't exist in it yet
-			if (Main.getResidentUtils(re.getName())==null){
-				Main.addResidentUtils(re.getName());
+			if (plugin.getResident(re.getName())==null){
+				plugin.addResident(re.getName());
 				System.out.println("resident added!");
 			}
 		}catch (Exception ex) {
@@ -143,8 +145,8 @@ public class WarListener implements Listener {
 			return;
 		}
 		try {
-			if(WarManager.getWarForNation(event.getTown().getNation()).getTownPoints(event.getTown()) > TownyWars.pPlayer){
-				war.chargeTownPoints(n, event.getTown(), TownyWars.pPlayer);
+			if(WarManager.getWarForNation(event.getTown().getNation()).getTownPoints(event.getTown()) > config.pPlayer){
+				war.chargeTownPoints(n, event.getTown(), config.pPlayer);
 			}
 		} catch (NotRegisteredException e) {
 			e.printStackTrace();
@@ -174,7 +176,7 @@ public class WarListener implements Listener {
 		if (war == null) {
 			return;
 		}
-		war.chargeTownPoints(n, event.getTown(), -TownyWars.pPlayer);
+		war.chargeTownPoints(n, event.getTown(), -config.pPlayer);
 		try {
 			WarManager.save();
 		} catch (Exception e) {
