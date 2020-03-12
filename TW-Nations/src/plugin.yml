@@ -1,7 +1,7 @@
-name: TownyWars
-version: 1.1.5
-authors: [DanielRHarris]
-main: com.danielrharris.townywars.TownyWars
+name: TW-Nations
+version: 1.0.0
+authors: [Steffbeard, aka zune]
+main: com.steffbeard.totalwar.nations.Main
 depend: [Towny]
 softdepend: [CS-CoreLib, CSCoreLib, BossBarAPI]
 commands:

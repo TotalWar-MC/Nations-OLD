@@ -196,7 +196,7 @@ public class Alliance extends TownyObject {
 			throw new NotRegisteredException();
 		} else {
 
-			remove(nation);
+			remove((NationUtils) nation);
 
 			if (getNumNations() == 0) {
 				throw new EmptyAllianceException(this);
@@ -220,7 +220,7 @@ public class Alliance extends TownyObject {
 	private void removeAllNations() {
 
 		for (Nation nation : new ArrayList<>(nations))
-			removeNation(nation);
+			remove(nation);
 	}
 
 	public void clear() {
@@ -263,12 +263,11 @@ public class Alliance extends TownyObject {
 		return out;
 	}
 
-	@Override
 	public List<Resident> getOutlaws() {
 
 		List<Resident> out = new ArrayList<>();
-		for (Town town : getNations())
-			out.addAll(town.getOutlaws());
+		for (Nation nation : getNations())
+			out.addAll(((Nation) nation.getTowns()).getOutlaws());
 		return out;
 	}
 

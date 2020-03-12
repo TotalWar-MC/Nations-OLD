@@ -40,4 +40,9 @@ public class NationUtils extends Nation {
 
 		return alliance != null;
 	}
+
+	public void remove(NationUtils nation) {
+		// TODO Auto-generated method stub
+		
+	}
 }
