@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="/Users/mohamedrashed/Downloads/GroupManager.jar"/>
 	<classpathentry kind="lib" path="/Users/mohamedrashed/Downloads/EssentialsX-2.17.1.0.jar"/>
 	<classpathentry kind="lib" path="/Users/mohamedrashed/Downloads/TNE-1.1.9.2.jar"/>
+	<classpathentry kind="lib" path="/Users/mohamedrashed/Downloads/PlaceholderAPI-2.10.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
