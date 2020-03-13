@@ -373,6 +373,10 @@ public class Alliance extends TownyObject {
      * Have to add MySQL support
      */
     
+    /*
+     * Have to turn TownySiettings into AllianceSettings soon
+     * 
+     */
 	@Override
 	public String getFormattedName() {
 		return TownySettings.getNationPrefix(this) + this.getName().replaceAll("_", " ")
