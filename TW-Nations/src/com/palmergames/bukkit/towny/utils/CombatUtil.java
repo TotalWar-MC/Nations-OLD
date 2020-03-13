@@ -231,15 +231,15 @@ public class CombatUtil {
 						break;
 						
 					case MINECART_CHEST:
-						block = Material.CHEST_MINECART;
+						block = Material.STORAGE_MINECART;
 						break;
 					
 					case MINECART_FURNACE:
-						block = Material.FURNACE_MINECART;
+						block = Material.POWERED_MINECART;
 						break;
 	
 					case MINECART_COMMAND:
-						block = Material.COMMAND_BLOCK_MINECART;
+						block = Material.COMMAND_MINECART;
 						break;
 	
 					case MINECART_HOPPER:

@@ -1,332 +1,199 @@
 package com.palmergames.bukkit.towny.regen;
 
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.TownBlock;
-import com.palmergames.bukkit.towny.regen.block.BlockObject;
-import com.palmergames.bukkit.util.BukkitTools;
-
-import de.themoep.idconverter.IdMappings;
-
 import org.bukkit.Material;
+import com.palmergames.bukkit.towny.regen.block.BlockObject;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import com.palmergames.bukkit.util.BukkitTools;
+import com.palmergames.bukkit.towny.TownySettings;
 import java.util.ArrayList;
 import java.util.List;
+import com.palmergames.bukkit.towny.object.TownBlock;
 
-public class PlotBlockData {
-
-	private int defaultVersion = 4;
-
-	private String worldName;
-	private TownBlock townBlock;
-	private int x, z, size, height, version;
-
-	private List<String> blockList = new ArrayList<>(); // Stores the original plot blocks
-	private int blockListRestored; // counter for the next block to test
-
-	public PlotBlockData(TownBlock townBlock) {
-
-		this.townBlock = townBlock;
-		setX(townBlock.getX());
-		setZ(townBlock.getZ());
-		setSize(TownySettings.getTownBlockSize());
-		this.worldName = townBlock.getWorld().getName();
-		this.setVersion(defaultVersion);
-		setHeight(townBlock.getWorldCoord().getBukkitWorld().getMaxHeight() - 1);
-		this.blockListRestored = 0;
-	}
-
-	public void initialize() {
-
-		List<String> blocks = getBlockArr();
-		if (blocks != null) {
-			setBlockList(blocks); //fill array
-			resetBlockListRestored();
-		}
-	}
-
-	/**
-	 * Fills an array with the current Block types from the plot.
-	 * 
-	 * @return
-	 */
-	private List<String> getBlockArr() {
-
-		List<String> list = new ArrayList<>();
-		Block block = null;
-
-		World world = this.townBlock.getWorldCoord().getBukkitWorld();
-		/*
-		 * if (!world.isChunkLoaded(MinecraftTools.calcChunk(getX()),
-		 * MinecraftTools.calcChunk(getZ()))) {
-		 * return null;
-		 * }
-		 */
-		for (int z = 0; z < size; z++)
-			for (int x = 0; x < size; x++)
-				for (int y = height; y > 0; y--) { // Top down to account for falling blocks.
-					block = world.getBlockAt((getX() * size) + x, y, (getZ() * size) + z);
-					switch (defaultVersion) {
-
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-						list.add(block.getBlockData().getAsString(true));
-						break;
-					default:
-						list.add(block.getType().getKey().toString());
-
-					}					
-				}
-		return list;
-	}
-
-	/**
-	 * Reverts an area to the stored image.
-	 * 
-	 * @return true if there are more blocks to check.
-	 */
-	@SuppressWarnings("deprecation")
-	public boolean restoreNextBlock() {
-
-		Block block = null;
-		int x, y, z, reverse, scale;
-		int worldx = getX() * size, worldz = getZ() * size;
-		Material blockMat, mat;
-		BlockObject storedData;
-		World world = this.townBlock.getWorldCoord().getBukkitWorld();
-
-		if (!world.isChunkLoaded(BukkitTools.calcChunk(getX()), BukkitTools.calcChunk(getZ())))
-			return true;
-		
-		TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - Version " + version);
-		//Scale for the number of elements
-		switch (version) {
-
-			case 1:
-			case 2:
-			case 3:
-				scale = 2;
-				break;	
-			case 4:
-				scale = 1;
-				break;	
-			default:
-				scale = 1;
-		}
-
-		reverse = (blockList.size() - blockListRestored) / scale;
-		
-		while (reverse > 0) {
-			reverse--; //regen bottom up to stand a better chance of restoring tree's and plants.
-			y = height - (reverse % height);
-			x = (int) (reverse / height) % size;
-			z = ((int) (reverse / height) / size) % size;
-	
-			block = world.getBlockAt(worldx + x, y, worldz + z);
-			blockMat = block.getType();
-			storedData = getStoredBlockData((blockList.size() - 1) - blockListRestored);
-			
-			switch (version) {
-		
-				case 1:
-				case 2:				
-				case 3:
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - block " + block.toString());
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - storedData.getTypeID() " + storedData.getTypeId());
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - storedData.getKey() " + storedData.getKey());
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - storedData.getData() " + storedData.getData());
-					if(storedData.usesID()) {
-						if (storedData.getData() == 0) {
-							TownyMessaging.sendDebugMsg("IDmappings - " + Material.getMaterial(IdMappings.getById(String.valueOf(storedData.getTypeId())).getFlatteningType()));
-							mat = BukkitTools.getMaterial(storedData.getTypeId());
-						} else {
-							try {
-								mat = Material.getMaterial(IdMappings.getById(String.valueOf(storedData.getTypeId()+ ":" + storedData.getData() )).getFlatteningType());					
-							} catch (NullPointerException e) {
-								// Sometimes blocks facing causes null lookups, we fall back to the base material.
-								mat = Material.getMaterial(IdMappings.getById(String.valueOf(storedData.getTypeId())).getFlatteningType());
-							}
-						}
-					} else {
-						mat = Material.matchMaterial(storedData.getKey());
-					}
-					// Increment based upon number of elements
-					blockListRestored += scale;
-						
-			
-					// If this block isn't correct, replace
-					// and return as done.
-					if (mat == null) {
-						TownyMessaging.sendErrorMsg("PlotBlockData:restoreNextBlock() - Material Null, skipping block.");
-					} else if (blockMat != mat) {
-						TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - blockMat " + blockMat.toString() + " doesn't match mat " + mat.toString());
-						if (!this.townBlock.getWorld().isPlotManagementIgnoreIds(mat.name(), storedData.getData())) {
-			
-							try {
-			
-									block.setType(mat, false);		
-									break;
-							} catch (Exception e) {
-								TownyMessaging.sendErrorMsg("Exception in PlotBlockData.java - BlockID found in legacy plotsnapshot which could not be resolved to a Material. ");
-							}
-			
-						} else {					
-							block.setType(Material.AIR);					
-						}
-			
-						return true;
-					}
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - Blocks match, no replacing needed.");
-					break;
-				
-				case 4:
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - block " + block.getBlockData());
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - storedData " + storedData.getBlockData());
-					
-					blockListRestored += scale;
-					
-					
-					mat = storedData.getMaterial();
-					if (mat == null) {
-						TownyMessaging.sendErrorMsg("PlotBlockData:restoreNextBlock() - Material Null, skipping block.");
-					} else if (blockMat != mat) {
-						TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - blockMat " + blockMat.toString() + " doesn't match mat " + mat.toString());
-						if (!this.townBlock.getWorld().isPlotManagementIgnoreIds(mat)) {
-							try {								
-								block.setType(mat, false);
-								block.setBlockData(storedData.getBlockData());
-								break;
-							} catch (Exception e) {
-								TownyMessaging.sendErrorMsg("Exception in PlotBlockData.java");
-								break;
-							}
-			
-						} else {					
-							block.setType(Material.AIR);					
-						}
-			
-						return true;
-					}
-					TownyMessaging.sendDebugMsg("PlotBlockData:restoreNextBlock() - Blocks match, no replacing needed.");
-					break;
-					
-				default:
-					TownyMessaging.sendErrorMsg("PlotBlockData:restoreNextBlock() - You should not be seeing this message.");					
-					
-			}
-		}
-		// reset as we are finished with the regeneration
-		resetBlockListRestored();
-		return false;
-	}
-
-	@SuppressWarnings("deprecation")
-	private BlockObject getStoredBlockData(int index) {
-
-		//return based upon version
-		switch (version) {
-
-		case 1:
-		case 2:
-		case 3:
-			return new BlockObject(blockList.get(index - 1), (byte) (Integer.valueOf(blockList.get(index)) & 0xff));
-		case 4:
-			return new BlockObject(blockList.get(index));
-		default:
-			return new BlockObject(blockList.get(index));
-		}
-
-	}
-
-	public int getX() {
-
-		return x;
-	}
-
-	public void setX(int x) {
-
-		this.x = x;
-	}
-
-	public int getZ() {
-
-		return z;
-	}
-
-	public void setZ(int z) {
-
-		this.z = z;
-	}
-
-	public int getSize() {
-
-		return size;
-	}
-
-	public void setSize(int size) {
-
-		this.size = size;
-	}
-
-	public int getHeight() {
-
-		return height;
-	}
-
-	public void setHeight(int height) {
-
-		this.height = height;
-	}
-
-	public String getWorldName() {
-
-		return worldName;
-	}
-
-	/**
-	 * @return the version
-	 */
-	public int getVersion() {
-
-		return version;
-	}
-
-	/**
-	 * @param version the version to set
-	 */
-	public void setVersion(int version) {
-
-		this.version = version;
-	}
-
-	/**
-	 * @return the blockList
-	 */
-	public List<String> getBlockList() {
-
-		return blockList;
-	}
-
-	/**
-	 * fills the BlockList
-	 * 
-	 * @param blockList - BlockList (List&lt;String&gt;)
-	 */
-	public void setBlockList(List<String> blockList) {
-
-		this.blockList = blockList;
-	}
-
-	/**
-	 * fills BlockListRestored with zero's to indicate
-	 * no blocks have been restored yet
-	 */
-	public void resetBlockListRestored() {
-
-		blockListRestored = 0;
-	}
-
+public class PlotBlockData
+{
+    private int defaultVersion;
+    private String worldName;
+    private TownBlock townBlock;
+    private int x;
+    private int z;
+    private int size;
+    private int height;
+    private int version;
+    private List<Integer> blockList;
+    private int blockListRestored;
+    
+    public PlotBlockData(final TownBlock townBlock) {
+        this.defaultVersion = 2;
+        this.blockList = new ArrayList<Integer>();
+        this.townBlock = townBlock;
+        this.setX(townBlock.getX());
+        this.setZ(townBlock.getZ());
+        this.setSize(TownySettings.getTownBlockSize());
+        this.worldName = townBlock.getWorld().getName();
+        this.setVersion(this.defaultVersion);
+        this.setHeight(townBlock.getWorldCoord().getBukkitWorld().getMaxHeight() - 1);
+        this.blockListRestored = 0;
+    }
+    
+    public void initialize() {
+        final List<Integer> blocks = this.getBlockArr();
+        if (blocks != null) {
+            this.setBlockList(blocks);
+            this.resetBlockListRestored();
+        }
+    }
+    
+    private List<Integer> getBlockArr() {
+        final List<Integer> list = new ArrayList<Integer>();
+        Block block = null;
+        final World world = this.townBlock.getWorldCoord().getBukkitWorld();
+        for (int z = 0; z < this.size; ++z) {
+            for (int x = 0; x < this.size; ++x) {
+                for (int y = this.height; y > 0; --y) {
+                    block = world.getBlockAt(this.getX() * this.size + x, y, this.getZ() * this.size + z);
+                    switch (this.defaultVersion) {
+                        case 1:
+                        case 2: {
+                            list.add(BukkitTools.getTypeId(block));
+                            list.add((int)BukkitTools.getData(block));
+                            break;
+                        }
+                        default: {
+                            list.add(BukkitTools.getTypeId(block));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+    
+    public boolean restoreNextBlock() {
+        Block block = null;
+        final int worldx = this.getX() * this.size;
+        final int worldz = this.getZ() * this.size;
+        final World world = this.townBlock.getWorldCoord().getBukkitWorld();
+        if (!world.isChunkLoaded(BukkitTools.calcChunk(this.getX()), BukkitTools.calcChunk(this.getZ()))) {
+            return true;
+        }
+        int scale = 0;
+        switch (this.version) {
+            case 1:
+            case 2: {
+                scale = 2;
+                break;
+            }
+            default: {
+                scale = 1;
+                break;
+            }
+        }
+        int reverse = (this.blockList.size() - this.blockListRestored) / scale;
+        while (reverse > 0) {
+            --reverse;
+            final int y = this.height - reverse % this.height;
+            final int x = reverse / this.height % this.size;
+            final int z = reverse / this.height / this.size % this.size;
+            block = world.getBlockAt(worldx + x, y, worldz + z);
+            final int blockId = BukkitTools.getTypeId(block);
+            final BlockObject storedData = this.getStoredBlockData(this.blockList.size() - 1 - this.blockListRestored);
+            this.blockListRestored += scale;
+            if (blockId != storedData.getTypeId() || BukkitTools.getData(block) != storedData.getData()) {
+                final Material mat = BukkitTools.getMaterial(storedData.getTypeId());
+                if (mat != null) {
+                    if (mat == null || this.townBlock.getWorld().isPlotManagementIgnoreIds(mat.name(), storedData.getData())) {
+                        BukkitTools.setTypeId(block, 0, false);
+                        return true;
+                    }
+                }
+                try {
+                    switch (this.version) {
+                        case 1:
+                        case 2: {
+                            BukkitTools.setTypeIdAndData(block, storedData.getTypeId(), storedData.getData(), false);
+                            break;
+                        }
+                        default: {
+                            BukkitTools.setTypeId(block, storedData.getTypeId(), false);
+                            break;
+                        }
+                    }
+                }
+                catch (Exception ex) {}
+                return true;
+            }
+        }
+        this.resetBlockListRestored();
+        return false;
+    }
+    
+    private BlockObject getStoredBlockData(final int index) {
+        switch (this.version) {
+            case 1:
+            case 2: {
+                return new BlockObject(this.blockList.get(index - 1), (byte)(this.blockList.get(index) & 0xFF));
+            }
+            default: {
+                return new BlockObject(this.blockList.get(index), (byte)0);
+            }
+        }
+    }
+    
+    public int getX() {
+        return this.x;
+    }
+    
+    public void setX(final int x) {
+        this.x = x;
+    }
+    
+    public int getZ() {
+        return this.z;
+    }
+    
+    public void setZ(final int z) {
+        this.z = z;
+    }
+    
+    public int getSize() {
+        return this.size;
+    }
+    
+    public void setSize(final int size) {
+        this.size = size;
+    }
+    
+    public int getHeight() {
+        return this.height;
+    }
+    
+    public void setHeight(final int height) {
+        this.height = height;
+    }
+    
+    public String getWorldName() {
+        return this.worldName;
+    }
+    
+    public int getVersion() {
+        return this.version;
+    }
+    
+    public void setVersion(final int version) {
+        this.version = version;
+    }
+    
+    public List<Integer> getBlockList() {
+        return this.blockList;
+    }
+    
+    public void setBlockList(final List<Integer> blockList) {
+        this.blockList = blockList;
+    }
+    
+    public void resetBlockListRestored() {
+        this.blockListRestored = 0;
+    }
 }
