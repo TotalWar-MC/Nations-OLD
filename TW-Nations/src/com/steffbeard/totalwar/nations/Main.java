@@ -40,28 +40,18 @@ import com.steffbeard.totalwar.nations.listeners.PvPListener;
 import com.steffbeard.totalwar.nations.listeners.WarListener;
 import com.steffbeard.totalwar.nations.managers.GriefManager;
 import com.steffbeard.totalwar.nations.managers.WarManager;
+import com.steffbeard.totalwar.nations.objects.Alliance;
 import com.steffbeard.totalwar.nations.objects.War;
 import com.steffbeard.totalwar.nations.tasks.SaveTask;
 import com.steffbeard.totalwar.nations.trades.TradeFile;
 import com.steffbeard.totalwar.nations.utils.ResidentUtils;
 import com.steffbeard.totalwar.nations.utils.SBlock;
 import com.steffbeard.totalwar.nations.Messages;
-import com.steffbeard.totalwar.nations.commands.AllianceCommand;
-import com.steffbeard.totalwar.nations.commands.RaidCommand;
-import com.steffbeard.totalwar.nations.commands.RebellionCommand;
-import com.steffbeard.totalwar.nations.commands.SiegeCommand;
 import com.steffbeard.totalwar.nations.commands.TradeCommand;
 import com.steffbeard.totalwar.nations.commands.WarCommand;
 import com.steffbeard.totalwar.nations.Config;
 import com.steffbeard.totalwar.nations.data.Alliances;
 import com.steffbeard.totalwar.nations.data.DataAccessor;
-
-import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownBlock;
-import com.palmergames.bukkit.towny.object.TownyUniverse;
 
 public class Main extends JavaPlugin {
 	
@@ -73,8 +63,6 @@ public class Main extends JavaPlugin {
     private TradeFile tradeFile;
     private DataAccessor blockdata;
     private GriefManager gm;
-    public static TownyUniverse tUniverse;
-    public Towny towny;
     public static boolean isBossBar = false;
     
     private Set<SBlock> blocksBroken = new HashSet<SBlock>();
@@ -132,14 +120,8 @@ public class Main extends JavaPlugin {
         manager.registerEvents((Listener)new EnemyWalkWWar(), (Plugin)this);
  // 	manager.registerEvents((Listener)new BlockEventListener(plugin, this.blocksBroken, banList), (Plugin)this);
         getCommand("war").setExecutor(new WarCommand());
-        getCommand("ally").setExecutor(new AllianceCommand());
-        getCommand("siege").setExecutor(new SiegeCommand());
-        getCommand("raid").setExecutor(new RaidCommand());
-        getCommand("rebel").setExecutor(new RebellionCommand());
         getCommand("trade").setExecutor(new TradeCommand());
         
-        towny = ((Towny)Bukkit.getPluginManager().getPlugin("Towny"));
-        tUniverse = towny.getTownyUniverse();
         if(Bukkit.getPluginManager().getPlugin("BossBarAPI")!=null){
         	isBossBar = true;
         }
@@ -150,14 +132,15 @@ public class Main extends JavaPlugin {
         }
         
         for (War w : WarManager.getWars()) {
-            for (Nation nation : w.getNationsInWar()) {
+            for (Alliance alliance : w.getAlliancessInWar()) {
+            	for (Nation n : alliance.getNations()) {
                 for (Town t : nation.getTowns()) {
                   t.setPVP(true);
                 }
             }
           }
 
-          TownyUniverse.getDataSource().saveTowns();
+          Main.getDataSource().saveTowns();
 
           this.saveDefaultConfig();
 
