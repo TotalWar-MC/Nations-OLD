@@ -71,7 +71,7 @@ public class Permission {
 	
 	public boolean pvp, fire, explosion, mobs;
 
-	public TownyPermission() {
+	public Permission() {
 		// Fill the perms array
 		perms = new boolean[PermLevel.values.length][ActionType.values.length];
 		
