@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
+import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.resident.ResidentList;
 import com.steffbeard.totalwar.nations.objects.town.Town;
@@ -320,7 +321,7 @@ public class Messages {
 		for (Player player : BukkitTools.getOnlinePlayers()) {
 			if (player != null)
 				try {
-					if (TownyUniverse.getInstance().getDataSource().getWorld(player.getLocation().getWorld().getName()).isUsingTowny())
+					if (NationsUniverse.getInstance().getDataSource().getWorld(player.getLocation().getWorld().getName()).isUsingTowny())
 						player.sendMessage(Settings.getLangString("default_towny_prefix") + line);
 				} catch (NotRegisteredException e) {
 					e.printStackTrace();
@@ -340,7 +341,7 @@ public class Messages {
 		for (Player player : BukkitTools.getOnlinePlayers()) {
 			if (player != null)
 				try {
-					if (TownyUniverse.getInstance().getDataSource().getWorld(player.getLocation().getWorld().getName()).isUsingTowny())
+					if (NationsUniverse.getInstance().getDataSource().getWorld(player.getLocation().getWorld().getName()).isUsingTowny())
 						player.sendMessage(line);
 				} catch (NotRegisteredException e) {
 					e.printStackTrace();
