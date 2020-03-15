@@ -3,10 +3,13 @@ package com.steffbeard.totalwar.nations.objects;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 
+import com.steffbeard.totalwar.nations.NationsUniverse;
 import com.steffbeard.totalwar.nations.Settings;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 import com.steffbeard.totalwar.nations.util.Coord;
+import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -779,12 +782,12 @@ public class NationsWorld extends NationsObject {
 	public void addMetaData(CustomDataField md) {
 		super.addMetaData(md);
 
-		TownyUniverse.getInstance().getDataSource().saveWorld(this);
+		NationsUniverse.getInstance().getDataSource().saveWorld(this);
 	}
 
 	public void removeMetaData(CustomDataField md) {
 		super.removeMetaData(md);
 
-		TownyUniverse.getInstance().getDataSource().saveWorld(this);
+		NationsUniverse.getInstance().getDataSource().saveWorld(this);
 	}
 }
