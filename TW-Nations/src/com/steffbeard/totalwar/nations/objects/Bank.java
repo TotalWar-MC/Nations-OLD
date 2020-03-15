@@ -3,6 +3,7 @@ package com.steffbeard.totalwar.nations.objects;
 import com.steffbeard.totalwar.nations.exceptions.EconomyException;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.handlers.EconomyHandler;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
 
 /**
  * Allows objects to manage a self contained bank.

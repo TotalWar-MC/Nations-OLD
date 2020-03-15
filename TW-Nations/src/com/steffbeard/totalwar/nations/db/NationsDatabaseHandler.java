@@ -10,7 +10,7 @@ import com.steffbeard.totalwar.nations.exceptions.EmptyTownException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.PlotGroup;
-import com.steffbeard.totalwar.nations.objects.Resident;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.NameValidation;
 import com.steffbeard.totalwar.nations.util.WorldCoord;

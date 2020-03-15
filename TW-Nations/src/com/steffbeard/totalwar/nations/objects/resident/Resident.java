@@ -1,4 +1,4 @@
-package com.steffbeard.totalwar.nations.objects;
+package com.steffbeard.totalwar.nations.objects.resident;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -14,6 +14,7 @@ import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.TooManyInvitesException;
 import com.steffbeard.totalwar.nations.handlers.EconomyHandler;
+import com.steffbeard.totalwar.nations.objects.NationsObject;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.StringMgmt;

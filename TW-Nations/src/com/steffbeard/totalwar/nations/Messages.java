@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
-import com.steffbeard.totalwar.nations.objects.Resident;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.ChatTools;
 import com.steffbeard.totalwar.nations.util.Colors;

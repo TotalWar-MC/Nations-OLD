@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.steffbeard.totalwar.nations.Messages;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 
 /**

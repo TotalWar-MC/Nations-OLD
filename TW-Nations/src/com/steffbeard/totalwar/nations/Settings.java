@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import com.steffbeard.totalwar.nations.config.CommentedConfiguration;
 import com.steffbeard.totalwar.nations.config.ConfigNodes;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
-import com.steffbeard.totalwar.nations.objects.Resident;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.FileMgmt;
