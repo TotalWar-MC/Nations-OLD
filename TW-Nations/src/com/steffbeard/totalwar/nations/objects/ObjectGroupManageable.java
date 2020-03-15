@@ -8,7 +8,7 @@ import java.util.UUID;
  * set of {@link ObjectGroup}.
  * @author Suneet Tipirneni (Siris)
  */
-interface ObjectGroupManageable<T extends ObjectGroup> {
+public interface ObjectGroupManageable<T extends ObjectGroup> {
 	
 	/**
 	 * Get the set of group objects associated with the subclass.

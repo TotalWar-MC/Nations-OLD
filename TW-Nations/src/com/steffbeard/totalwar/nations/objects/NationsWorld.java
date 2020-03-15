@@ -7,6 +7,7 @@ import com.steffbeard.totalwar.nations.NationsUniverse;
 import com.steffbeard.totalwar.nations.Settings;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 import com.steffbeard.totalwar.nations.util.Coord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;

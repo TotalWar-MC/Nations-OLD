@@ -14,7 +14,10 @@ import com.steffbeard.totalwar.nations.Settings;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.permissions.Permission;
+import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 
 import java.util.List;
 
@@ -452,6 +455,26 @@ public class CombatUtil {
 			if (a == b)
 				return true;
 			if (a.getNation() == b.getNation())
+				return true;
+		} catch (NotRegisteredException e) {
+			return false;
+		}
+		return false;
+	}
+	
+	/**
+	 * Is nation b in an alliance with nation a?
+	 * 
+	 * @param a - Nation A in comparison
+	 * @param b - Nation B in comparison
+	 * @return true if they are allies.
+	 */
+	public static boolean isSameAlliance(Nation a, Nation b) {
+
+		try {
+			if (a == b)
+				return true;
+			if (a.getAlliance() == b.getAlliance())
 				return true;
 		} catch (NotRegisteredException e) {
 			return false;

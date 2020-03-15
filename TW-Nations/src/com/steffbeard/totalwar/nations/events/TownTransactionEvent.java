@@ -4,6 +4,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import com.steffbeard.totalwar.nations.economy.Transaction;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 
 import org.bukkit.Bukkit;
 

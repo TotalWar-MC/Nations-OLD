@@ -15,6 +15,7 @@ import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.TooManyInvitesException;
 import com.steffbeard.totalwar.nations.handlers.EconomyHandler;
 import com.steffbeard.totalwar.nations.objects.NationsObject;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.StringMgmt;
@@ -115,7 +116,7 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 				if (BukkitTools.isOnline(player.getName())) {
 					// Use teleport warmup
 					player.sendMessage(String.format(Settings.getLangString("msg_town_spawn_warmup"), Settings.getTeleportWarmupTime()));
-					TownyAPI.getInstance().jailTeleport(player, loc);
+					NationsAPI.getInstance().jailTeleport(player, loc);
 				}
 				freeFromJail(player, index, false);
 			} catch (NationsException e) {
@@ -128,7 +129,7 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 
 				// Use teleport warmup
 				player.sendMessage(String.format(Settings.getLangString("msg_town_spawn_warmup"), Settings.getTeleportWarmupTime()));
-				TownyAPI.getInstance().jailTeleport(player, loc);
+				NationsAPI.getInstance().jailTeleport(player, loc);
 
 				sendToJail(player, index, town);
 				if (days > 0) {

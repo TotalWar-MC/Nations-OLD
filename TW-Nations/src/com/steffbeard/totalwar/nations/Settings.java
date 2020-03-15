@@ -9,12 +9,14 @@ import com.steffbeard.totalwar.nations.config.CommentedConfiguration;
 import com.steffbeard.totalwar.nations.config.ConfigNodes;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.FileMgmt;
 import com.steffbeard.totalwar.nations.util.NameValidation;
 import com.steffbeard.totalwar.nations.util.StringMgmt;
 import com.steffbeard.totalwar.nations.util.TimeTools;
+import com.steffbeard.totalwar.nations.util.WorldCoord;
 
 import java.io.File;
 import java.io.IOException;

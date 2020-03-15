@@ -10,9 +10,11 @@ import com.steffbeard.totalwar.nations.exceptions.KeyAlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.Coord;
 import com.steffbeard.totalwar.nations.util.Trie;
+import com.steffbeard.totalwar.nations.util.WorldCoord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 
 import java.io.File;
@@ -48,7 +50,7 @@ public class NationsUniverse {
     private final List<Resident> jailedResidents = new ArrayList<>();
     private final String rootFolder;
     private NationsDataSource dataSource;
-    private TownyPermissionSource permissionSource;
+    private NationsPermissionSource permissionSource;
     private War warEvent;
     
     private NationsUniverse() {
@@ -60,7 +62,7 @@ public class NationsUniverse {
     boolean loadSettings() {
         
         try {
-            Settings.loadConfig(rootFolder + File.separator + "settings" + File.separator + "config.yml", towny.getVersion());
+            Settings.loadConfig(rootFolder + File.separator + "settings" + File.separator + "config.yml", plugin.getVersion());
             Settings.loadLanguage(rootFolder + File.separator + "settings", "english.yml");
             TownyPerms.loadPerms(rootFolder + File.separator + "settings", "townyperms.yml");
             
@@ -137,7 +139,7 @@ public class NationsUniverse {
             for (Town town : dataSource.getTowns()) {
                 TownySQLSource.validateTownOutposts(town);
             }
-            towny.saveResource("outpostschecked.txt", false);
+            plugin.saveResource("outpostschecked.txt", false);
         }
         
         return true;
@@ -215,7 +217,7 @@ public class NationsUniverse {
         } catch (NotRegisteredException e) {
             // Not a registered world
         }
-        towny.updateCache(worldCoord);
+        plugin.updateCache(worldCoord);
     }
     
     public void removeWarZone(WorldCoord worldCoord) {
@@ -224,14 +226,14 @@ public class NationsUniverse {
         } catch (NotRegisteredException e) {
             // Not a registered world
         }
-        towny.updateCache(worldCoord);
+        plugin.updateCache(worldCoord);
     }
     
-    public TownyPermissionSource getPermissionSource() {
+    public NationsPermissionSource getPermissionSource() {
         return permissionSource;
     }
     
-    public void setPermissionSource(TownyPermissionSource permissionSource) {
+    public void setPermissionSource(NationsPermissionSource permissionSource) {
         this.permissionSource = permissionSource;
     }
     
