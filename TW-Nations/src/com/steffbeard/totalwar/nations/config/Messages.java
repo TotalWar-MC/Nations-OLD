@@ -1,4 +1,4 @@
-package com.steffbeard.totalwar.nations;
+package com.steffbeard.totalwar.nations.config;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -6,8 +6,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.steffbeard.totalwar.nations.Main;
+import com.steffbeard.totalwar.nations.NationsAPI;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
-import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.invites.Invite;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.resident.ResidentList;
 import com.steffbeard.totalwar.nations.objects.town.Town;
@@ -33,7 +36,7 @@ public class Messages {
 	 * @param msg message to send
 	 */
 	public static void sendErrorMsg(String msg) {
-		LOGGER.warn(ChatTools.stripColour("[Towny] Error: " + msg));
+		LOGGER.warn(ChatTools.stripColour("[Nations] Error: " + msg));
 	}
 
 	/**
@@ -88,13 +91,13 @@ public class Messages {
 
 	/**
 	 * Sends a message to console only
-	 * prefixed by [Towny]
+	 * prefixed by [Nations]
 	 *
 	 * @param msg the message to be sent
 	 */
 	public static void sendMsg(String msg) {
 		
-		LOGGER.info("[Towny] " + ChatTools.stripColour(msg));
+		LOGGER.info("[Nations] " + ChatTools.stripColour(msg));
 	}
 
 	/**
@@ -185,13 +188,13 @@ public class Messages {
 
 	/**
 	 * Sends a message to the log and console
-	 * prefixed by [Towny] Debug:
+	 * prefixed by [Nations] Debug:
 	 *
 	 * @param msg the message to be sent
 	 */
 	public static void sendDebugMsg(String msg) {
 		if (Settings.getDebug()) {
-			LOGGER_DEBUG.info(ChatTools.stripColour("[Towny] Debug: " + msg));
+			LOGGER_DEBUG.info(ChatTools.stripColour("[Nations] Debug: " + msg));
 		}
 		sendDevMsg(msg);
 	}
@@ -257,7 +260,7 @@ public class Messages {
 
 	/**
 	 * Send a message to all online residents of a town
-	 * Doesn't use a [Towny] or [TownName] prefix.
+	 * Doesn't use a [Nations] or [TownName] prefix.
 	 * It is prefered to use sendPrefixedTownMessage or sendTownMessagePrefixed.
 	 *
 	 * @param town to receive message
@@ -270,7 +273,7 @@ public class Messages {
 
 	/**
 	 * Send a message to all online residents of a nation
-	 * Doesn't use a [Towny] or [NationName] prefix.
+	 * Doesn't use a [Nations] or [NationName] prefix.
 	 * It is prefered to use sendPrefixedNationMessage or sendNationMessagePrefixed.
 	 *
 	 * @param nation nation to receive message
@@ -320,12 +323,7 @@ public class Messages {
 		LOGGER.info(ChatTools.stripColour("[Global Message] " + line));
 		for (Player player : BukkitTools.getOnlinePlayers()) {
 			if (player != null)
-				try {
-					if (NationsUniverse.getInstance().getDataSource().getWorld(player.getLocation().getWorld().getName()).isUsingTowny())
-						player.sendMessage(Settings.getLangString("default_towny_prefix") + line);
-				} catch (NotRegisteredException e) {
-					e.printStackTrace();
-				}
+				player.sendMessage(Settings.getLangString("default_towny_prefix") + line);
 		}
 	}
 	
@@ -340,12 +338,7 @@ public class Messages {
 		LOGGER.info(ChatTools.stripColour("[Global Message] " + line));
 		for (Player player : BukkitTools.getOnlinePlayers()) {
 			if (player != null)
-				try {
-					if (NationsUniverse.getInstance().getDataSource().getWorld(player.getLocation().getWorld().getName()).isUsingTowny())
-						player.sendMessage(line);
-				} catch (NotRegisteredException e) {
-					e.printStackTrace();
-				}
+				player.sendMessage(line);
 		}		
 	}
 
@@ -368,7 +361,7 @@ public class Messages {
 
 	/**
 	 * Send a multi-line message to All online residents of a town and log
-	 * Doesn't use a [Towny] or [TownName] prefix.
+	 * Doesn't use a [Nations] or [TownName] prefix.
 	 * It is prefered to use sendPrefixedTownMessage or sendTownMessagePrefixed.
 	 * 
 	 * @param town the town to send a message to
@@ -388,7 +381,7 @@ public class Messages {
 
 	/**
 	 * Send a message to All online residents of a town and log
-	 * Doesn't use a [Towny] or [TownName] prefix.
+	 * Doesn't use a [Nations] or [TownName] prefix.
 	 * It is prefered to use sendPrefixedTownMessage or sendTownMessagePrefixed.
 	 *
 	 * @param town town to send message to
@@ -457,7 +450,7 @@ public class Messages {
 	
 	/**
 	 * Send a multi-line message to All online residents of a nation and log
-	 * Doesn't use a [Towny] or [NationName] prefix.
+	 * Doesn't use a [Nations] or [NationName] prefix.
 	 * It is prefered to use sendPrefixedNationMessage or sendNationMessagePrefixed.
 	 *
 	 * @param nation the nation to send to
@@ -477,7 +470,7 @@ public class Messages {
 
 	/**
 	 * Send a message to All online residents of a nation and log
-	 * Doesn't use a [Towny] or [NationName] prefix.
+	 * Doesn't use a [Nations] or [NationName] prefix.
 	 * It is prefered to use sendPrefixedNationMessage or sendNationMessagePrefixed.
 	 *
 	 * @param nation nation to send message to

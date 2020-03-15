@@ -8,14 +8,17 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Wolf;
 
 import com.steffbeard.totalwar.nations.Main;
-import com.steffbeard.totalwar.nations.Messages;
 import com.steffbeard.totalwar.nations.NationsUniverse;
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.objects.town.TownBlockType;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 
@@ -43,10 +46,6 @@ public class CombatUtil {
 
 		try {
 			NationsWorld world = NationsUniverse.getInstance().getDataSource().getWorld(defender.getWorld().getName());
-
-			// World using Towny
-			if (!world.isUsingTowny())
-				return false;
 
 			Player a = null;
 			Player b = null;
@@ -102,10 +101,6 @@ public class CombatUtil {
 	 * @throws NotRegisteredException - Generic NotRegisteredException
 	 */
 	public static boolean preventDamageCall(Main plugin, NationsWorld world, Entity attackingEntity, Entity defendingEntity, Player attackingPlayer, Player defendingPlayer) throws NotRegisteredException {
-
-		// World using Towny
-		if (!world.isUsingTowny())
-			return false;
 
 		Coord coord = Coord.parseCoord(defendingEntity);
 		TownBlock defenderTB = null;

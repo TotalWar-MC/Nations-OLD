@@ -3,7 +3,7 @@ package com.steffbeard.totalwar.nations.util;
 import com.google.common.base.Charsets;
 
 import com.steffbeard.totalwar.nations.Main;
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Settings;
 
 import net.citizensnpcs.api.CitizensAPI;
 

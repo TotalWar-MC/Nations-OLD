@@ -1,5 +1,7 @@
 package com.steffbeard.totalwar.nations.exceptions;
 
+import com.steffbeard.totalwar.nations.objects.town.Town;
+
 public class EmptyTownException extends Exception {
 
 	private static final long serialVersionUID = 5058583908170407803L;

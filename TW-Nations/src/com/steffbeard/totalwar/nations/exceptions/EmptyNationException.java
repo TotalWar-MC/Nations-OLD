@@ -1,5 +1,7 @@
 package com.steffbeard.totalwar.nations.exceptions;
 
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+
 public class EmptyNationException extends Exception {
 
 	private static final long serialVersionUID = 6093696939107516795L;

@@ -5,13 +5,21 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import com.steffbeard.totalwar.nations.Main;
-import com.steffbeard.totalwar.nations.Messages;
+import com.steffbeard.totalwar.nations.NationsAPI;
 import com.steffbeard.totalwar.nations.NationsUniverse;
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.objects.town.TownBlockType;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
+import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
+import com.steffbeard.totalwar.nations.util.PlayerCache.TownBlockStatus;
 
 /**
  * Groups all the cache status and permissions in one place.
@@ -220,14 +228,6 @@ public class PlayerCacheUtil {
 		//if (isTownyAdmin(player))
 		//        return TownBlockStatus.ADMIN;
 
-		try {
-			if (!worldCoord.getNationsWorld().isUsingTowny())
-				return TownBlockStatus.OFF_WORLD;
-		} catch (NotRegisteredException ex) {
-			// Not a registered world
-			return TownBlockStatus.NOT_REGISTERED;
-		}
-
 		//NationsUniverse universe = plugin.getNationsUniverse();
 		TownBlock townBlock;
 		Town town;
@@ -250,7 +250,7 @@ public class PlayerCacheUtil {
 			// When nation zones are enabled we do extra tests to determine if this is near to a nation.
 			if (Settings.getNationZonesEnabled()) {
 				// This nation zone system can be disabled during wartime.
-				if (!(Settings.getNationZonesWarDisables() && TownyAPI.getInstance().isWarTime())) {
+				if (!(Settings.getNationZonesWarDisables() && NationsAPI.getInstance().isWarTime())) {
 					Town nearestTown = null;
 					int distance;
 					try {
@@ -317,7 +317,7 @@ public class PlayerCacheUtil {
 
 		try {
 			// War Time switch rights
-			if (TownyAPI.getInstance().isWarTime()) {
+			if (NationsAPI.getInstance().isWarTime()) {
 				if (Settings.isAllowWarBlockGriefing()) {
 					try {
 						if (!resident.getTown().getNation().isNeutral() && !town.getNation().isNeutral() && worldCoord.getNationsWorld().isWarAllowed())
@@ -357,7 +357,7 @@ public class PlayerCacheUtil {
 
 			// Resident with no town.
 			if (!resident.hasTown()) {				
-				if (TownyAPI.getInstance().isWarTime() && townBlock.isWarZone() && !Settings.isWarTimeTownsNeutral())
+				if (NationsAPI.getInstance().isWarTime() && townBlock.isWarZone() && !Settings.isWarTimeTownsNeutral())
 					return TownBlockStatus.WARZONE;
 				else
 					return TownBlockStatus.OUTSIDER;
@@ -370,7 +370,7 @@ public class PlayerCacheUtil {
 				if (CombatUtil.isAlly(town, resident.getTown()))
 					return TownBlockStatus.TOWN_ALLY;
 				else if (CombatUtil.isEnemy(resident.getTown(), town)) {
-					if (TownyAPI.getInstance().isWarTime() && townBlock.isWarZone() || War.isWarZone(townBlock.getWorldCoord()))
+					if (NationsAPI.getInstance().isWarTime() && townBlock.isWarZone() || War.isWarZone(townBlock.getWorldCoord()))
 						return TownBlockStatus.WARZONE;
 					else
 						return TownBlockStatus.ENEMY;

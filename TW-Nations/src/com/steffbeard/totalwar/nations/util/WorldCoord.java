@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import com.steffbeard.totalwar.nations.NationsUniverse;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 
 import java.util.Objects;
 

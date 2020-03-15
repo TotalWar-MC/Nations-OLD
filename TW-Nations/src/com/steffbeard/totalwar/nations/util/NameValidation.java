@@ -2,7 +2,7 @@ package com.steffbeard.totalwar.nations.util;
 
 import javax.naming.InvalidNameException;
 
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Settings;
 
 import java.util.ArrayList;
 import java.util.Arrays;

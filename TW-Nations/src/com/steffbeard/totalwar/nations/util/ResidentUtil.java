@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
-import com.steffbeard.totalwar.nations.Messages;
 import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.resident.ResidentList;
 
 public class ResidentUtil {
 	

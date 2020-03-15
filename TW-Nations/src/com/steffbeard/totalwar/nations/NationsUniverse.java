@@ -4,15 +4,23 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.db.NationsDataSource;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.KeyAlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
+import com.steffbeard.totalwar.nations.objects.PlotGroup;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.permissions.NationsPermissionSource;
+import com.steffbeard.totalwar.nations.permissions.NationsPerms;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.Coord;
+import com.steffbeard.totalwar.nations.util.FileMgmt;
 import com.steffbeard.totalwar.nations.util.Trie;
 import com.steffbeard.totalwar.nations.util.WorldCoord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
@@ -28,9 +36,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Towny's class for internal API Methods
+ * Nations's class for internal API Methods
  * If you don't want to change the dataSource, war, permissions or similiar behavior
- * and only for example want to get Resident objects you should use {@link TownyAPI}
+ * and only for example want to get Resident objects you should use {@link NationsAPI}
  *
  * @author Lukas Mansour (Articdive)
  */
@@ -64,7 +72,7 @@ public class NationsUniverse {
         try {
             Settings.loadConfig(rootFolder + File.separator + "settings" + File.separator + "config.yml", plugin.getVersion());
             Settings.loadLanguage(rootFolder + File.separator + "settings", "english.yml");
-            TownyPerms.loadPerms(rootFolder + File.separator + "settings", "townyperms.yml");
+            NationsPerms.loadPerms(rootFolder + File.separator + "settings", "townyperms.yml");
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -79,12 +87,12 @@ public class NationsUniverse {
         // Setup any defaults before we load the dataSource.
         Coord.setCellSize(Settings.getTownBlockSize());
         
-        System.out.println("[Towny] Database: [Load] " + loadDbType + " [Save] " + saveDbType);
+        System.out.println("[Nations] Database: [Load] " + loadDbType + " [Save] " + saveDbType);
         
         clearAll();
                 
         if (!loadDatabase(loadDbType)) {
-            System.out.println("[Towny] Error: Failed to load!");
+            System.out.println("[Nations] Error: Failed to load!");
             return false;
         }
         
@@ -94,13 +102,13 @@ public class NationsUniverse {
             switch (saveDbType.toLowerCase()) {
                 case "ff":
                 case "flatfile": {
-                    this.dataSource = new TownyFlatFileSource(plugin, this);
+                    this.dataSource = new FlatFileSource(plugin, this);
                     break;
                 }
                 case "h2":
                 case "sqlite":
                 case "mysql": {
-                    this.dataSource = new TownySQLSource(plugin, this, saveDbType.toLowerCase());
+                    this.dataSource = new SQLSource(plugin, this, saveDbType.toLowerCase());
                     break;
                 }
                 default: {
@@ -116,7 +124,7 @@ public class NationsUniverse {
                 }
                 
             } catch (IOException e) {
-                System.out.println("[Towny] Error: Could not create backup.");
+                System.out.println("[Nations] Error: Could not create backup.");
                 e.printStackTrace();
                 return false;
             }
@@ -130,14 +138,14 @@ public class NationsUniverse {
             }
             
         } catch (UnsupportedOperationException e) {
-            System.out.println("[Towny] Error: Unsupported save format!");
+            System.out.println("[Nations] Error: Unsupported save format!");
             return false;
         }
         
         File f = new File(rootFolder, "outpostschecked.txt");
         if (!(f.exists())) {
             for (Town town : dataSource.getTowns()) {
-                TownySQLSource.validateTownOutposts(town);
+                SQLSource.validateTownOutposts(town);
             }
             plugin.saveResource("outpostschecked.txt", false);
         }
@@ -150,13 +158,13 @@ public class NationsUniverse {
         switch (loadDbType.toLowerCase()) {
             case "ff":
             case "flatfile": {
-                this.dataSource = new TownyFlatFileSource(plugin, this);
+                this.dataSource = new FlatFileSource(plugin, this);
                 break;
             }
             case "h2":
             case "sqlite":
             case "mysql": {
-                this.dataSource = new TownySQLSource(plugin, this, loadDbType.toLowerCase());
+                this.dataSource = new SQLSource(plugin, this, loadDbType.toLowerCase());
                 break;
             }
             default: {
@@ -179,7 +187,7 @@ public class NationsUniverse {
             return;
         }
         
-        // Perform login code in it's own thread to update Towny data.
+        // Perform login code in it's own thread to update Nations data.
         //new OnPlayerLogin(plugin, player).start();
         if (BukkitTools.scheduleSyncDelayedTask(new OnPlayerLogin(plugin, player), 0L) == -1) {
             Messages.sendErrorMsg("Could not schedule OnLogin.");

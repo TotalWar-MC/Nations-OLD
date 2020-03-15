@@ -3,8 +3,8 @@ package com.steffbeard.totalwar.nations.economy;
 import org.bukkit.World;
 
 import com.steffbeard.totalwar.nations.NationsLogger;
-import com.steffbeard.totalwar.nations.Settings;
 import com.steffbeard.totalwar.nations.config.ConfigNodes;
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.exceptions.EconomyException;
 import com.steffbeard.totalwar.nations.handlers.EconomyHandler;
 import com.steffbeard.totalwar.nations.objects.NationsObject;
@@ -22,12 +22,12 @@ public class EconomyAccount extends NationsObject {
 	public static final ServerAccount SERVER_ACCOUNT = new ServerAccount();
 	private World world;
 	
-	protected EconomyAccount(String name, World world) {
+	public EconomyAccount(String name, World world) {
 		super(name);
 		this.world = world;
 	}
 	
-	protected EconomyAccount(String name) {
+	public EconomyAccount(String name) {
 		super(name);
 	}
 
@@ -35,7 +35,7 @@ public class EconomyAccount extends NationsObject {
 		return world;
 	}
 
-	private static final class ServerAccount extends EconomyAccount {
+	public static final class ServerAccount extends EconomyAccount {
 		ServerAccount() {
 			super(Settings.getString(ConfigNodes.ECO_CLOSED_ECONOMY_SERVER_ACCOUNT));
 		}
@@ -62,7 +62,7 @@ public class EconomyAccount extends NationsObject {
 		}
 	}
 
-	boolean _pay(double amount) throws EconomyException {
+	public boolean _pay(double amount) throws EconomyException {
 		if (canPayFromHoldings(amount)) {
 			if (NationsEconomyHandler.isActive())
 				if (amount > 0) {

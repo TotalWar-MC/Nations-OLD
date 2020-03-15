@@ -2,8 +2,10 @@ package com.steffbeard.totalwar.nations.permissions;
 
 import java.util.Arrays;
 
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.objects.town.TownBlockOwner;
 import com.steffbeard.totalwar.nations.util.Colors;
 
 public class Permission {

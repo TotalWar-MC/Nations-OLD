@@ -4,10 +4,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 
 import com.steffbeard.totalwar.nations.NationsUniverse;
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
+import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 import com.steffbeard.totalwar.nations.util.Coord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
@@ -44,7 +46,6 @@ public class NationsWorld extends NationsObject {
 	private List<Coord> warZones = new ArrayList<>();
 	private List<String> entityExplosionProtection = null;
 	
-	private boolean isUsingTowny = Settings.isUsingTowny();
 	private boolean isWarAllowed = Settings.isWarAllowed();
 	private boolean isPVP = Settings.isPvP();
 	private boolean isForcePVP = Settings.isForcingPvP();
@@ -330,10 +331,6 @@ public class NationsWorld extends NationsObject {
 	}
 
 	public boolean isClaimable() {
-
-		if (!isUsingTowny())
-			return false;
-		else
 			return isClaimable;
 	}
 
@@ -608,16 +605,6 @@ public class NationsWorld extends NationsObject {
 		this.unclaimedZoneName = unclaimedZoneName;
 	}
 
-	public void setUsingTowny(boolean isUsingTowny) {
-
-		this.isUsingTowny = isUsingTowny;
-	}
-
-	public boolean isUsingTowny() {
-
-		return isUsingTowny;
-	}
-
 	public void setUnclaimedZoneItemUse(Boolean unclaimedZoneItemUse) {
 
 		this.unclaimedZoneItemUse = unclaimedZoneItemUse;
@@ -665,7 +652,7 @@ public class NationsWorld extends NationsObject {
 				double dist = Math.sqrt(Math.pow(townCoord.getX() - key.getX(), 2) + Math.pow(townCoord.getZ() - key.getZ(), 2));
 				if (dist < min)
 					min = dist;
-			} catch (TownyException e) {
+			} catch (NationsException e) {
 			}
 
 		return (int) Math.ceil(min);
@@ -708,7 +695,7 @@ public class NationsWorld extends NationsObject {
 					if (dist < min)
 						min = dist;
 				}
-			} catch (TownyException e) {
+			} catch (NationsException e) {
 			}
 
 		return (int) Math.ceil(min);

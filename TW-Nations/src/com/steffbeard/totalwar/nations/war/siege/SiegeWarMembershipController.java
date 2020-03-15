@@ -1,10 +1,5 @@
-package com.palmergames.bukkit.towny.war.siegewar;
+package com.steffbeard.totalwar.nations.war.siege;
 
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarPointsUtil;
 
 /**
  * This class intercepts 'remove' requests, where a resident is removed from a town,

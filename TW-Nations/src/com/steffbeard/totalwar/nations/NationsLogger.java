@@ -11,6 +11,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.economy.EconomyAccount;
 
 import java.io.File;

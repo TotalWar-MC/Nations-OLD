@@ -1,13 +1,16 @@
 package com.steffbeard.totalwar.nations.db;
 
 import com.steffbeard.totalwar.nations.Main;
-import com.steffbeard.totalwar.nations.Messages;
 import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.PlotGroup;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 
 import org.bukkit.entity.Player;
 

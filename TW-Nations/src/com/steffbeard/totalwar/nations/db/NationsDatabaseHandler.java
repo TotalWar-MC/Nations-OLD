@@ -4,13 +4,22 @@ import org.bukkit.entity.Player;
 
 import com.steffbeard.totalwar.nations.Main;
 import com.steffbeard.totalwar.nations.NationsUniverse;
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.economy.NationsEconomyHandler;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
+import com.steffbeard.totalwar.nations.exceptions.EconomyException;
+import com.steffbeard.totalwar.nations.exceptions.EmptyNationException;
 import com.steffbeard.totalwar.nations.exceptions.EmptyTownException;
+import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.PlotGroup;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.NameValidation;
 import com.steffbeard.totalwar.nations.util.WorldCoord;
@@ -79,7 +88,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 			try {
 				Resident target = getResident(name);
 				invited.add(target);
-			} catch (TownyException x) {
+			} catch (NationsException x) {
 				Messages.sendErrorMsg(player, x.getMessage());
 			}
 		return invited;
@@ -334,13 +343,13 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 		WorldCoord coord = townBlock.getWorldCoord(); 
 
 		if (world.isUsingPlotManagementDelete())
-			TownyRegenAPI.addDeleteTownBlockIdQueue(coord);
+			NationsRegenAPI.addDeleteTownBlockIdQueue(coord);
 
 		// Move the plot to be restored
 		if (world.isUsingPlotManagementRevert()) {
-			PlotBlockData plotData = TownyRegenAPI.getPlotChunkSnapshot(townBlock);
+			PlotBlockData plotData = NationsRegenAPI.getPlotChunkSnapshot(townBlock);
 			if (plotData != null && !plotData.getBlockList().isEmpty()) {
-				TownyRegenAPI.addPlotChunk(plotData, true);
+				NationsRegenAPI.addPlotChunk(plotData, true);
 			}
 		}
 
@@ -389,13 +398,13 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 //		    saveTown(town);				  occuring when towns are deleted. 
 
 		if (townBlock.getWorld().isUsingPlotManagementDelete())
-			TownyRegenAPI.addDeleteTownBlockIdQueue(townBlock.getWorldCoord());
+			NationsRegenAPI.addDeleteTownBlockIdQueue(townBlock.getWorldCoord());
 
 		// Move the plot to be restored
 		if (townBlock.getWorld().isUsingPlotManagementRevert()) {
-			PlotBlockData plotData = TownyRegenAPI.getPlotChunkSnapshot(townBlock);
+			PlotBlockData plotData = NationsRegenAPI.getPlotChunkSnapshot(townBlock);
 			if (plotData != null && !plotData.getBlockList().isEmpty()) {
-				TownyRegenAPI.addPlotChunk(plotData, true);
+				NationsRegenAPI.addPlotChunk(plotData, true);
 			}
 		}
 		// Raise an event to signal the unclaim
@@ -625,7 +634,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 			}
 		}
 
-		if (TownyEconomyHandler.isActive())
+		if (NationsEconomyHandler.isActive())
 			try {
 				town.getAccount().payTo(town.getAccount().getHoldingBalance(), new WarSpoils(), "Remove Town");
 				town.getAccount().removeAccount();
@@ -676,7 +685,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 			saveNation(toCheck);
 
 		// Transfer any money to the warchest.
-		if (TownyEconomyHandler.isActive())
+		if (NationsEconomyHandler.isActive())
 			try {
 				nation.getAccount().payTo(nation.getAccount().getHoldingBalance(), new WarSpoils(), "Remove Nation");
 				nation.getAccount().removeAccount();
@@ -1023,7 +1032,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 				universe.getSiegeZonesMap().put(newSiegeZoneName.toLowerCase(), siegeZone);
 			}
 
-			if (TownyEconomyHandler.isActive()) {
+			if (NationsEconomyHandler.isActive()) {
 				try {
 					nation.getAccount().setName(Settings.getNationAccountPrefix() + nation.getName());
 					nation.getAccount().setBalance(nationBalance, "Rename Nation - Transfer to new account");
@@ -1109,7 +1118,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 			boolean isNPC;
 			int JailSpawn;
 			
-			if(TownyEconomyHandler.getVersion().startsWith("iConomy 5") && Settings.isUsingEconomy()){
+			if(NationsEconomyHandler.getVersion().startsWith("iConomy 5") && Settings.isUsingEconomy()){
 				try {
 					balance = resident.getAccount().getHoldingBalance();
 					resident.getAccount().removeAccount();
@@ -1120,7 +1129,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 			//get data needed for resident
 			List<Resident> friends = resident.getFriends();
 			List<String> nationRanks = resident.getNationRanks();
-			TownyPermission permissions = resident.getPermissions();
+			Permission permissions = resident.getPermissions();
 			String surname = resident.getSurname();
 			String title = resident.getTitle();
 			if (resident.hasTown()) {
@@ -1156,7 +1165,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 			universe.getResidentsTrie().addKey(newName);
 			
 			//add everything back to the resident
-			if (TownyEconomyHandler.getVersion().startsWith("iConomy 5") && Settings.isUsingEconomy()) {
+			if (NationsEconomyHandler.getVersion().startsWith("iConomy 5") && Settings.isUsingEconomy()) {
 				try {
 					resident.getAccount().setName(resident.getName());
 					resident.getAccount().setBalance(balance, "Rename Player - Transfer to new account");
@@ -1177,7 +1186,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 			if(isMayor){
 				try {
 					town.setMayor(resident);
-				} catch (TownyException ignored) {
+				} catch (NationsException ignored) {
 				}
 			}
 			if (isNPC)
@@ -1388,7 +1397,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 	}
 
 	@Override
-	public void removeTownFromNation(Towny plugin, Town town, Nation nation) {
+	public void removeTownFromNation(Main plugin, Town town, Nation nation) {
 		boolean removeNation = false;
 
 		try {
@@ -1412,7 +1421,7 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 	}
 
 	@Override
-	public void addTownToNation(Towny plugin, Town town,Nation nation) {
+	public void addTownToNation(Main plugin, Town town,Nation nation) {
 		try {
 			nation.addTown(town);
 			saveTown(town);

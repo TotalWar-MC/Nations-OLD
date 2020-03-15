@@ -2,14 +2,19 @@ package com.steffbeard.totalwar.nations.objects.town;
 
 import org.bukkit.Bukkit;
 
-import com.steffbeard.totalwar.nations.Messages;
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.economy.EconomyAccount;
+import com.steffbeard.totalwar.nations.economy.NationsEconomyHandler;
 import com.steffbeard.totalwar.nations.exceptions.*;
 import com.steffbeard.totalwar.nations.objects.NationsObject;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.PlotGroup;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.permissions.Permission;
+import com.steffbeard.totalwar.nations.util.Coord;
+import com.steffbeard.totalwar.nations.util.WorldCoord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 
 import java.util.HashSet;
@@ -286,10 +291,10 @@ public class TownBlock extends NationsObject {
 		}
 		
 		if (cost > 0 && Settings.isUsingEconomy() && !resident.getAccount().payTo(cost, EconomyAccount.SERVER_ACCOUNT, String.format("Plot set to %s", type)))
-			throw new EconomyException(String.format(Settings.getLangString("msg_err_cannot_afford_plot_set_type_cost"), type, TownyEconomyHandler.getFormattedBalance(cost)));
+			throw new EconomyException(String.format(Settings.getLangString("msg_err_cannot_afford_plot_set_type_cost"), type, NationsEconomyHandler.getFormattedBalance(cost)));
 		
 		if (cost > 0)
-			Messages.sendMessage(resident, String.format(Settings.getLangString("msg_plot_set_cost"), TownyEconomyHandler.getFormattedBalance(cost), type));
+			Messages.sendMessage(resident, String.format(Settings.getLangString("msg_plot_set_cost"), NationsEconomyHandler.getFormattedBalance(cost), type));
 
 		if (this.isJail())
 			this.getTown().removeJailSpawn(this.getCoord());
@@ -410,7 +415,7 @@ public class TownBlock extends NationsObject {
 			metadata = new HashSet<>();
 		
 		getMetadata().add(md);
-		TownyUniverse.getInstance().getDataSource().saveTownBlock(this);
+		NationsUniverse.getInstance().getDataSource().saveTownBlock(this);
 	}
 	
 	public void removeMetaData(CustomDataField md) {
@@ -422,7 +427,7 @@ public class TownBlock extends NationsObject {
 		if (getMetadata().size() == 0)
 			this.metadata = null;
 
-		TownyUniverse.getInstance().getDataSource().saveTownBlock(this);
+		NationsUniverse.getInstance().getDataSource().saveTownBlock(this);
 	}
 
 	public HashSet<CustomDataField> getMetadata() {

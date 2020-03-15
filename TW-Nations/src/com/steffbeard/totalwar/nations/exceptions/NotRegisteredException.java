@@ -1,6 +1,6 @@
 package com.steffbeard.totalwar.nations.exceptions;
 
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Settings;
 
 public class NotRegisteredException extends NationsException {
 

@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.steffbeard.totalwar.nations.Messages;
+import com.steffbeard.totalwar.nations.config.Messages;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.objects.town.TownBlockOwner;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 
 /**
@@ -142,11 +145,11 @@ public class PlotGroup extends ObjectGroup implements TownBlockOwner {
 		this.permissions.load(line);
 	}
 
-	public TownyPermission getPermissions() {
+	public Permission getPermissions() {
 		return permissions;
 	}
 
-	public void setPermissions(TownyPermission permissions) {
+	public void setPermissions(Permission permissions) {
 		this.permissions = permissions;
 	}
 	

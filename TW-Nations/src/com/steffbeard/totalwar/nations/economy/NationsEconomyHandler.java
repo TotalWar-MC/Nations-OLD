@@ -12,8 +12,8 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import com.steffbeard.totalwar.nations.Messages;
 import com.steffbeard.totalwar.nations.Main;
+import com.steffbeard.totalwar.nations.config.Messages;
 import com.steffbeard.totalwar.nations.events.NationsPreTransactionEvent;
 import com.steffbeard.totalwar.nations.events.NationsTransactionEvent;
 import com.steffbeard.totalwar.nations.util.BukkitTools;

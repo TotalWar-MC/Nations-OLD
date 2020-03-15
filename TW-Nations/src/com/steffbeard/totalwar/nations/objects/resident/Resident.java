@@ -4,9 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import com.steffbeard.totalwar.nations.Messages;
+import com.steffbeard.totalwar.nations.NationsAPI;
 import com.steffbeard.totalwar.nations.NationsUniverse;
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.confirmations.ConfirmationType;
 import com.steffbeard.totalwar.nations.economy.EconomyAccount;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.EmptyTownException;
@@ -14,12 +16,19 @@ import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.TooManyInvitesException;
 import com.steffbeard.totalwar.nations.handlers.EconomyHandler;
+import com.steffbeard.totalwar.nations.invites.Invite;
+import com.steffbeard.totalwar.nations.invites.InviteHandler;
+import com.steffbeard.totalwar.nations.invites.NationsInviteReceiver;
 import com.steffbeard.totalwar.nations.objects.NationsObject;
 import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.objects.town.TownBlockOwner;
+import com.steffbeard.totalwar.nations.permissions.NationsPerms;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.StringMgmt;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
+import com.steffbeard.totalwar.nations.war.siege.SiegeWarRankController;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -367,12 +376,12 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 	public void updatePerms() {
 		townRanks.clear();
 		nationRanks.clear();
-		TownyPerms.assignPermissions(this, null);
+		NationsPerms.assignPermissions(this, null);
 	}
 	
 	public void updatePermsForNationRemoval() {
 		nationRanks.clear();
-		TownyPerms.assignPermissions(this, null);
+		NationsPerms.assignPermissions(this, null);
 	}
 
 	public void setRegistered(long registered) {
@@ -457,7 +466,7 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 //			Object[][][] snapshot = regenUndo.get(regenUndo.size() - 1);
 //			regenUndo.remove(snapshot);
 //
-//			TownyRegenAPI.regenUndo(snapshot, this);
+//			NationsRegenAPI.regenUndo(snapshot, this);
 //
 //		}
 //	}	
@@ -519,7 +528,7 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 	}
 	
 	/**
-	 * Only for internal Towny use. NEVER call this from any other plugin.
+	 * Only for internal Nations use. NEVER call this from any other plugin.
 	 *
 	 * @param modes - String Array of modes
 	 * @param notify - If notifications should be sent
@@ -536,13 +545,13 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 
 	public boolean addTownRank(String rank) throws AlreadyRegisteredException {
 
-		if (this.hasTown() && TownyPerms.getTownRanks().contains(rank)) {
+		if (this.hasTown() && NationsPerms.getTownRanks().contains(rank)) {
 			if (townRanks.contains(rank))
 				throw new AlreadyRegisteredException();
 
 			townRanks.add(rank);
 			if (BukkitTools.isOnline(this.getName()))
-				TownyPerms.assignPermissions(this, null);
+				NationsPerms.assignPermissions(this, null);
 			BukkitTools.getPluginManager().callEvent(new TownAddResidentRankEvent(this, rank, town));
 			return true;
 		}
@@ -570,7 +579,7 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 		if (townRanks.contains(rank)) {
 			townRanks.remove(rank);
 			if (BukkitTools.isOnline(this.getName())) {
-				TownyPerms.assignPermissions(this, null);
+				NationsPerms.assignPermissions(this, null);
 			}
 			BukkitTools.getPluginManager().callEvent(new TownRemoveResidentRankEvent(this, rank, town));
 			return true;
@@ -581,13 +590,13 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 
 	public boolean addNationRank(String rank) throws AlreadyRegisteredException {
 
-		if (this.hasNation() && TownyPerms.getNationRanks().contains(rank)) {
+		if (this.hasNation() && NationsPerms.getNationRanks().contains(rank)) {
 			if (nationRanks.contains(rank))
 				throw new AlreadyRegisteredException();
 
 			nationRanks.add(rank);
 			if (BukkitTools.isOnline(this.getName()))
-				TownyPerms.assignPermissions(this, null);
+				NationsPerms.assignPermissions(this, null);
 			return true;
 		}
 
@@ -614,7 +623,7 @@ public class Resident extends NationsObject implements NationsInviteReceiver, Ec
 		if (nationRanks.contains(rank)) {
 			nationRanks.remove(rank);
 			if (BukkitTools.isOnline(this.getName()))
-				TownyPerms.assignPermissions(this, null);
+				NationsPerms.assignPermissions(this, null);
 			return true;
 		}
 

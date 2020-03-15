@@ -4,18 +4,39 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import com.steffbeard.totalwar.nations.Settings;
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.ConfigNodes;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.economy.EconomyAccount;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
+import com.steffbeard.totalwar.nations.exceptions.EconomyException;
+import com.steffbeard.totalwar.nations.exceptions.EmptyNationException;
+import com.steffbeard.totalwar.nations.exceptions.EmptyTownException;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
+import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.exceptions.TooManyInvitesException;
+import com.steffbeard.totalwar.nations.invites.Invite;
+import com.steffbeard.totalwar.nations.invites.InviteHandler;
+import com.steffbeard.totalwar.nations.invites.NationsInviter;
 import com.steffbeard.totalwar.nations.objects.Bank;
 import com.steffbeard.totalwar.nations.objects.NationsObject;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.resident.ResidentList;
+import com.steffbeard.totalwar.nations.permissions.NationsPerms;
 import com.steffbeard.totalwar.nations.permissions.Permission;
+import com.steffbeard.totalwar.nations.util.BukkitTools;
+import com.steffbeard.totalwar.nations.util.Coord;
+import com.steffbeard.totalwar.nations.util.StringMgmt;
+import com.steffbeard.totalwar.nations.util.TimeMgmt;
+import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
+import com.steffbeard.totalwar.nations.war.siege.SiegeWarMembershipController;
+import com.steffbeard.totalwar.nations.war.siege.enums.SiegeStatus;
+import com.steffbeard.totalwar.nations.war.siege.location.Siege;
 import com.steffbeard.totalwar.nations.objects.ObjectGroupManageable;
 import com.steffbeard.totalwar.nations.objects.PlotGroup;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +101,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 		recentlyRuinedEndTime = 0;
 		revoltImmunityEndTime = 0;
 		siegeImmunityEndTime = System.currentTimeMillis()
-			+ (long)(Settings.getWarSiegeSiegeImmunityTimeNewTownsHours() * ONE_HOUR_IN_MILLIS);
+			+ (long)(Settings.getWarSiegeSiegeImmunityTimeNewTownsHours() * com.steffbeard.totalwar.nations.util.TimeMgmt.ONE_HOUR_IN_MILLIS);
 		siege = null;
 		occupied = false;
 		neutral = false;
@@ -163,7 +184,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 			throw new NationsException(Settings.getLangString("msg_err_mayor_doesnt_belong_to_town"));
 		this.mayor = mayor;
 		
-		TownyPerms.assignPermissions(mayor, null);
+		NationsPerms.assignPermissions(mayor, null);
 	}
 
 	public Nation getNation() throws NotRegisteredException {
@@ -178,7 +199,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 
 		if (nation == null) {
 			this.nation = null;
-			TownyPerms.updateTownPerms(this);
+			NationsPerms.updateTownPerms(this);
 			return;
 		}
 		if (this.nation == nation)
@@ -186,7 +207,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 		if (hasNation())
 			throw new AlreadyRegisteredException();
 		this.nation = nation;
-		TownyPerms.updateTownPerms(this);
+		NationsPerms.updateTownPerms(this);
 	}
 
 	@Override
@@ -508,7 +529,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 				Coord capitalCoord = nation.getCapital().getHomeBlock().getCoord();
 				Coord townCoord = this.getHomeBlock().getCoord();
 				if (!nation.getCapital().getHomeBlock().getWorld().getName().equals(this.getHomeBlock().getWorld().getName())) {
-					TownyMessaging.sendNationMessagePrefixed(nation, String.format(Settings.getLangString("msg_nation_town_moved_their_homeblock_too_far"), this.getName()));
+					Messages.sendNationMessagePrefixed(nation, String.format(Settings.getLangString("msg_nation_town_moved_their_homeblock_too_far"), this.getName()));
 					try {
 						nation.removeTown(this);
 					} catch (EmptyNationException e) {
@@ -518,7 +539,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 				double distance;
 				distance = Math.sqrt(Math.pow(capitalCoord.getX() - townCoord.getX(), 2) + Math.pow(capitalCoord.getZ() - townCoord.getZ(), 2));			
 				if (distance > Settings.getNationRequiresProximity()) {
-					TownyMessaging.sendNationMessagePrefixed(nation, String.format(Settings.getLangString("msg_nation_town_moved_their_homeblock_too_far"), this.getName()));
+					Messages.sendNationMessagePrefixed(nation, String.format(Settings.getLangString("msg_nation_town_moved_their_homeblock_too_far"), this.getName()));
 					try {
 						nation.removeTown(this);
 					} catch (EmptyNationException e) {
@@ -1016,7 +1037,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 			double bankcap = Settings.getTownBankCap();
 			if (bankcap > 0) {
 				if (amount + getAccount().getHoldingBalance() > bankcap) {
-					TownyMessaging.sendPrefixedTownMessage(this, String.format(Settings.getLangString("msg_err_deposit_capped"), bankcap));
+					Messages.sendPrefixedTownMessage(this, String.format(Settings.getLangString("msg_err_deposit_capped"), bankcap));
 					return;
 				}
 			}
@@ -1414,7 +1435,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 		
 		ArrayList<TownBlock> retVal = new ArrayList<>();
 		
-		TownyMessaging.sendErrorMsg(group.toString());
+		Messages.sendErrorMsg(group.toString());
 		
 		for (TownBlock townBlock : getTownBlocks()) {
 			if (townBlock.hasPlotObjectGroup() && townBlock.getPlotObjectGroup().equals(group))
@@ -1614,7 +1635,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 	@Deprecated
 	public boolean pay(double amount, String reason) throws EconomyException {
 		if (Settings.getBoolean(ConfigNodes.ECO_CLOSED_ECONOMY_ENABLED)) {
-			return getAccount().payTo(amount, SERVER_ACCOUNT, reason);
+			return getAccount().payTo(amount, EconomyAccount.SERVER_ACCOUNT, reason);
 		} else {
 			return getAccount()._pay(amount);
 		}

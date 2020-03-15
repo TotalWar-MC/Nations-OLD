@@ -1,16 +1,23 @@
-package com.steffbeard.totalwar.nations;
+package com.steffbeard.totalwar.nations.config;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
-import com.steffbeard.totalwar.nations.config.CommentedConfiguration;
-import com.steffbeard.totalwar.nations.config.ConfigNodes;
+import com.steffbeard.totalwar.nations.NationsUniverse;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.objects.NationsObject;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+import com.steffbeard.totalwar.nations.objects.nations.NationSpawnLevel.NSpawnLevel;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.objects.town.TownBlockOwner;
+import com.steffbeard.totalwar.nations.objects.town.TownSpawnLevel.SpawnLevel;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
+import com.steffbeard.totalwar.nations.permissions.Permission.PermLevel;
+import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.FileMgmt;
 import com.steffbeard.totalwar.nations.util.NameValidation;
@@ -115,8 +122,8 @@ public class Settings {
 						(Integer) level.get("townBlockBuyBonusLimit")
 						);
 			} catch (NullPointerException e) {
-				System.out.println("Your Towny config.yml's town_level section is out of date.");
-				System.out.println("This can be fixed automatically by deleting the town_level section and letting Towny remake it on the next startup.");
+				System.out.println("Your Nations config.yml's town_level section is out of date.");
+				System.out.println("This can be fixed automatically by deleting the town_level section and letting Nations remake it on the next startup.");
 				throw new IOException("Config.yml town_levels incomplete.");
 			}
 
@@ -154,8 +161,8 @@ public class Settings {
 						(Integer) level.get("nationBonusOutpostLimit")
 						);
 			} catch (Exception e) {
-				System.out.println("Your Towny config.yml's nation_level section is out of date.");
-				System.out.println("This can be fixed automatically by deleting the nation_level section and letting Towny remake it on the next startup.");
+				System.out.println("Your Nations config.yml's nation_level section is out of date.");
+				System.out.println("This can be fixed automatically by deleting the nation_level section and letting Nations remake it on the next startup.");
 				throw new IOException("Config.yml nation_levels incomplete.");
 			}
 
@@ -242,19 +249,27 @@ public class Settings {
 		}
 	}
 
+	/***
+	 * 
+	 * @deprecated
+	 * Deprecated FlagWar stuff
+	 * 
+	 * Needs to be updated with new system
+	 * 
+	 */
 	public static void loadCachedObjects() throws IOException {
 
 		// Cell War material types.
-		TownyWarConfig.setFlagBaseMaterial(Material.matchMaterial(getString(ConfigNodes.WAR_ENEMY_FLAG_BASE_BLOCK)));
-		TownyWarConfig.setFlagLightMaterial(Material.matchMaterial(getString(ConfigNodes.WAR_ENEMY_FLAG_LIGHT_BLOCK)));
-		TownyWarConfig.setBeaconWireFrameMaterial(Material.matchMaterial(getString(ConfigNodes.WAR_ENEMY_BEACON_WIREFRAME_BLOCK)));
+//		NationsWarConfig.setFlagBaseMaterial(Material.matchMaterial(getString(ConfigNodes.WAR_ENEMY_FLAG_BASE_BLOCK)));
+//		NationsWarConfig.setFlagLightMaterial(Material.matchMaterial(getString(ConfigNodes.WAR_ENEMY_FLAG_LIGHT_BLOCK)));
+//		NationsWarConfig.setBeaconWireFrameMaterial(Material.matchMaterial(getString(ConfigNodes.WAR_ENEMY_BEACON_WIREFRAME_BLOCK)));
 
 		// Load Nation & Town level data into maps.
 		loadTownLevelConfig();
 		loadNationLevelConfig();
 
 		// Load allowed blocks in warzone.
-		TownyWarConfig.setEditableMaterialsInWarZone(getAllowedMaterials(ConfigNodes.WAR_WARZONE_EDITABLE_MATERIALS));
+		NationsWarConfig.setEditableMaterialsInWarZone(getAllowedMaterials(ConfigNodes.WAR_WARZONE_EDITABLE_MATERIALS));
 
 		ChunkNotification.loadFormatStrings();
 	}
@@ -295,7 +310,7 @@ public class Settings {
 
 	private static void sendError(String msg) {
 
-		System.out.println("[Towny] Error could not read " + msg);
+		System.out.println("[Nations] Error could not read " + msg);
 	}
 
 	private static String[] parseString(String str) {
@@ -797,7 +812,7 @@ public class Settings {
 		return parseString(String.format(getLangString("MSG_NEW_KING"), who, nation));
 	}
 
-	public static String[] getJoinWarMsg(TownyObject obj) {
+	public static String[] getJoinWarMsg(NationsObject obj) {
 
 		return parseString(String.format(getLangString("MSG_WAR_JOIN"), obj.getName()));
 	}
@@ -876,7 +891,7 @@ public class Settings {
 	}
 	//Score Methods
 
-	public static String[] getCouldntPayTaxesMsg(TownyObject obj, String type) {
+	public static String[] getCouldntPayTaxesMsg(NationsObject obj, String type) {
 
 		return parseString(String.format(getLangString("MSG_COULDNT_PAY_TAXES"), obj.getName(), type));
 	}
@@ -1353,14 +1368,14 @@ public class Settings {
 	public static List<String> getWorldMobRemovalEntities() {
 
 		if (getDebug())
-			System.out.println("[Towny] Debug: Reading World Mob removal entities. ");
+			System.out.println("[Nations] Debug: Reading World Mob removal entities. ");
 		return getStrArr(ConfigNodes.PROT_MOB_REMOVE_WORLD);
 	}
 
 	public static List<String> getTownMobRemovalEntities() {
 
 		if (getDebug())
-			System.out.println("[Towny] Debug: Reading Town Mob removal entities. ");
+			System.out.println("[Nations] Debug: Reading Town Mob removal entities. ");
 		return getStrArr(ConfigNodes.PROT_MOB_REMOVE_TOWN);
 	}
 
@@ -1387,7 +1402,7 @@ public class Settings {
 	public static List<String> getWildExplosionProtectionEntities() {
 
 		if (getDebug())
-			System.out.println("[Towny] Debug: Wilderness explosion protection entities. ");
+			System.out.println("[Nations] Debug: Wilderness explosion protection entities. ");
 		return getStrArr(ConfigNodes.NWS_PLOT_MANAGEMENT_WILD_ENTITY_REVERT_LIST);
 	}
 
@@ -1648,7 +1663,7 @@ public class Settings {
 	public static List<String> getDisallowedTownSpawnZones() {
 
 		if (getDebug())
-			System.out.println("[Towny] Debug: Reading disallowed town spawn zones. ");
+			System.out.println("[Nations] Debug: Reading disallowed town spawn zones. ");
 		return getStrArr(ConfigNodes.GTOWN_SETTINGS_PREVENT_TOWN_SPAWN_IN);
 	}
 
@@ -1998,7 +2013,7 @@ public class Settings {
 		return t;
 	}
 
-	public static boolean isUsingTowny() {
+	public static boolean isUsingNations() {
 
 		return getBoolean(ConfigNodes.NWS_WORLD_USING_TOWNY);
 	}
@@ -2113,15 +2128,15 @@ public class Settings {
 		return getInt(ConfigNodes.GTOWN_MAX_RESIDENTS_PER_TOWN);
 	}
 
-	public static boolean isTownyUpdating(String currentVersion) {
+	public static boolean isNationsUpdating(String currentVersion) {
 
-		if (isTownyUpToDate(currentVersion))
+		if (isNationsUpToDate(currentVersion))
 			return false;
 		else
 			return true; // Assume
 	}
 
-	public static boolean isTownyUpToDate(String currentVersion) {
+	public static boolean isNationsUpToDate(String currentVersion) {
 
 		return currentVersion.equals(getLastRunVersion(currentVersion));
 	}
