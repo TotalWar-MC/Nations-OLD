@@ -7,7 +7,14 @@ import org.bukkit.entity.Player;
 
 import com.steffbeard.totalwar.nations.config.CommentedConfiguration;
 import com.steffbeard.totalwar.nations.config.ConfigNodes;
+import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.objects.Resident;
+import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
+import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.FileMgmt;
+import com.steffbeard.totalwar.nations.util.NameValidation;
+import com.steffbeard.totalwar.nations.util.StringMgmt;
+import com.steffbeard.totalwar.nations.util.TimeTools;
 
 import java.io.File;
 import java.io.IOException;
@@ -267,10 +274,10 @@ public class Settings {
 			try {
 				newLanguage.loadFromString(FileMgmt.convertStreamToString("/" + res));
 			} catch (IOException e) {
-				TownyMessaging.sendMsg("Custom language file detected, not updating.");
+				Messages.sendMsg("Custom language file detected, not updating.");
 				return;
 			} catch (InvalidConfigurationException e) {
-				TownyMessaging.sendMsg("Invalid Configuration in language file detected.");
+				Messages.sendMsg("Invalid Configuration in language file detected.");
 			}
 			String resVersion = newLanguage.getString("version");
 			String langVersion = Settings.getLangString("version");
@@ -278,7 +285,7 @@ public class Settings {
 			if (!langVersion.equalsIgnoreCase(resVersion)) {
 				language = newLanguage;
 				newLanguage = null;
-				TownyMessaging.sendMsg("Newer language file available, language file updated.");
+				Messages.sendMsg("Newer language file available, language file updated.");
 				FileMgmt.stringToFile(FileMgmt.convertStreamToString("/" + res), file);
 			}
 		}
@@ -2150,7 +2157,7 @@ public class Settings {
 
 	public static int getMaxResidentPlots(Resident resident) {
 
-		int maxPlots = TownyUniverse.getInstance().getPermissionSource().getGroupPermissionIntNode(resident.getName(), PermissionNodes.TOWNY_MAX_PLOTS.getNode());
+		int maxPlots = NationsUniverse.getInstance().getPermissionSource().getGroupPermissionIntNode(resident.getName(), PermissionNodes.TOWNY_MAX_PLOTS.getNode());
 		if (maxPlots == -1)
 			maxPlots = getInt(ConfigNodes.TOWN_MAX_PLOTS_PER_RESIDENT);
 		return maxPlots;
@@ -2158,7 +2165,7 @@ public class Settings {
 	
 	public static int getMaxResidentExtraPlots(Resident resident) {
 
-		int extraPlots = TownyUniverse.getInstance().getPermissionSource().getPlayerPermissionIntNode(resident.getName(), PermissionNodes.TOWNY_EXTRA_PLOTS.getNode());
+		int extraPlots = NationsUniverse.getInstance().getPermissionSource().getPlayerPermissionIntNode(resident.getName(), PermissionNodes.TOWNY_EXTRA_PLOTS.getNode());
 		if (extraPlots == -1)
 			extraPlots = 0;
 		return extraPlots;
@@ -2166,7 +2173,7 @@ public class Settings {
 
 	public static int getMaxResidentOutposts(Resident resident) {
 
-		int maxOutposts = TownyUniverse.getInstance().getPermissionSource().getGroupPermissionIntNode(resident.getName(), PermissionNodes.TOWNY_MAX_OUTPOSTS.getNode());
+		int maxOutposts = NationsUniverse.getInstance().getPermissionSource().getGroupPermissionIntNode(resident.getName(), PermissionNodes.TOWNY_MAX_OUTPOSTS.getNode());
 		return maxOutposts;
 	}
 

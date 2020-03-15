@@ -9,6 +9,7 @@ import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.KeyAlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
+import com.steffbeard.totalwar.nations.objects.Resident;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.Coord;
 import com.steffbeard.totalwar.nations.util.Trie;

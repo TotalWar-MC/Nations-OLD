@@ -6,6 +6,8 @@ import com.steffbeard.totalwar.nations.NationsUniverse;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
+import com.steffbeard.totalwar.nations.objects.PlotGroup;
+import com.steffbeard.totalwar.nations.objects.Resident;
 
 import org.bukkit.entity.Player;
 
