@@ -24,6 +24,7 @@ import com.steffbeard.totalwar.nations.util.FileMgmt;
 import com.steffbeard.totalwar.nations.util.Trie;
 import com.steffbeard.totalwar.nations.util.WorldCoord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
+import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +73,7 @@ public class NationsUniverse {
         try {
             Settings.loadConfig(rootFolder + File.separator + "settings" + File.separator + "config.yml", plugin.getVersion());
             Settings.loadLanguage(rootFolder + File.separator + "settings", "english.yml");
-            NationsPerms.loadPerms(rootFolder + File.separator + "settings", "townyperms.yml");
+            NationsPerms.loadPerms(rootFolder + File.separator + "settings", "nationsperms.yml");
             
         } catch (IOException e) {
             e.printStackTrace();

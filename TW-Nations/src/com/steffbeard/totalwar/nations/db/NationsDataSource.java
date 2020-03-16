@@ -7,10 +7,12 @@ import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.PlotGroup;
+import com.steffbeard.totalwar.nations.objects.alliances.Alliance;
 import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.objects.town.TownBlock;
+import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
 
 import org.bukkit.entity.Player;
 

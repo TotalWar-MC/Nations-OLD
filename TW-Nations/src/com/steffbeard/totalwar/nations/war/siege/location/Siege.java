@@ -9,7 +9,7 @@ import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.util.TimeMgmt;
-import com.steffbeard.totalwar.nations.war.siege.enums.SiegeStatus;
+import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
 
 import static com.steffbeard.totalwar.nations.util.TimeMgmt.ONE_HOUR_IN_MILLIS;
 

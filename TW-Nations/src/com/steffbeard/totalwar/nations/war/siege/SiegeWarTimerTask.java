@@ -1,27 +1,5 @@
 package com.steffbeard.totalwar.nations.war.siege;
 
-import com.palmergames.bukkit.towny.Towny;
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.TownyUniverse;
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownyObject;
-import com.palmergames.bukkit.towny.permissions.PermissionNodes;
-import com.palmergames.bukkit.towny.tasks.TownyTimerTask;
-import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
-import com.palmergames.bukkit.towny.war.siegewar.locations.Siege;
-import com.palmergames.bukkit.towny.war.siegewar.locations.SiegeZone;
-import com.palmergames.bukkit.towny.war.siegewar.timeractions.AttackerWin;
-import com.palmergames.bukkit.towny.war.siegewar.timeractions.DefenderWin;
-import com.palmergames.bukkit.towny.war.siegewar.timeractions.RemovePostSpawnDamageImmunity;
-import com.palmergames.bukkit.towny.war.siegewar.timeractions.RemoveRuinedTowns;
-import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarBlockUtil;
-import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarMoneyUtil;
-import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarPointsUtil;
-import com.palmergames.bukkit.util.BukkitTools;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
@@ -29,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.palmergames.util.TimeMgmt.ONE_MINUTE_IN_MILLIS;
+import static com.steffbeard.totalwar.nations.util.TimeMgmt.ONE_MINUTE_IN_MILLIS;
 
 /**
  * This class represents the siegewar timer task
@@ -264,7 +242,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 				}
 
 				//Save changes to db
-				com.palmergames.bukkit.towny.TownyUniverse townyUniverse = com.palmergames.bukkit.towny.TownyUniverse.getInstance();
+				TownyUniverse townyUniverse = TownyUniverse.getInstance();
 				townyUniverse.getDataSource().saveTown(siege.getDefendingTown());
 			}
 

@@ -1,17 +1,10 @@
 package com.steffbeard.totalwar.nations.war.siege.events;
 
-import com.palmergames.bukkit.towny.TownyEconomyHandler;
-import com.palmergames.bukkit.towny.TownyFormatter;
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.exceptions.EconomyException;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.war.siegewar.locations.SiegeZone;
-import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarMoneyUtil;
-import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarSiegeCompletionUtil;
-import com.palmergames.bukkit.towny.war.siegewar.locations.Siege;
-import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
-import com.palmergames.bukkit.util.ChatTools;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
+import com.steffbeard.totalwar.nations.war.siege.location.Siege;
 
 /**
  * This class is responsible for processing siege attacker wins
@@ -29,8 +22,8 @@ public class AttackerWin {
 	public static void attackerWin(Siege siege, Nation winnerNation) {
         SiegeWarSiegeCompletionUtil.updateSiegeValuesToComplete(siege, SiegeStatus.ATTACKER_WIN, winnerNation);
 
-		TownyMessaging.sendGlobalMessage(String.format(
-			TownySettings.getLangString("msg_siege_war_attacker_win"),
+		Messages.sendGlobalMessage(String.format(
+			Settings.getLangString("msg_siege_war_attacker_win"),
 			winnerNation.getFormattedName(),
 			siege.getDefendingTown().getFormattedName()
 		));

@@ -23,6 +23,8 @@ import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.NameValidation;
 import com.steffbeard.totalwar.nations.util.WorldCoord;
+import com.steffbeard.totalwar.nations.war.siege.location.Siege;
+import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
 
 import javax.naming.InvalidNameException;
 import java.io.File;
@@ -78,6 +80,12 @@ public abstract class NationsDatabaseHandler extends NationsDataSource {
 	public boolean hasAlliance(String name) {
 
 		return universe.getAlliancesMap().containsKey(name.toLowerCase());
+	}
+	
+	@Override
+	public boolean hasColony(String name) {
+
+		return universe.getColoniesMap().containsKey(name.toLowerCase());
 	}
 
 	@Override

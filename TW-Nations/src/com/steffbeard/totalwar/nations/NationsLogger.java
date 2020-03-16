@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class NationsLogger {
 	private static final NationsLogger instance = new NationsLogger();
-	private static final Logger LOGGER_MONEY = LogManager.getLogger("com.palmergames.bukkit.nations.money");
+	private static final Logger LOGGER_MONEY = LogManager.getLogger("com.steffbeard.totalwar.nations.money");
 	
 	private NationsLogger() {
 		LoggerContext ctx = (LoggerContext) LogManager.getContext(false);

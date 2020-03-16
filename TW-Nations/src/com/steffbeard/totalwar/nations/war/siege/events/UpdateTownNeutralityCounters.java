@@ -1,14 +1,13 @@
 package com.steffbeard.totalwar.nations.war.siege.events;
 
-import com.palmergames.bukkit.towny.TownyFormatter;
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownySettings;
-import com.palmergames.bukkit.towny.TownyUniverse;
-import com.palmergames.bukkit.towny.object.Town;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 
 /**
  * This class is responsible for updating the neutrality counters of all towns
@@ -21,7 +20,7 @@ public class UpdateTownNeutralityCounters {
 	 * This method adjust the neutrality counters of all towns, where required
 	 */
 	public static void updateTownNeutralityCounters() {
-		TownyUniverse townyUniverse = TownyUniverse.getInstance();
+		NationsUniverse townyUniverse = NationsUniverse.getInstance();
 
 		List<Town> towns = new ArrayList<>(townyUniverse.getDataSource().getTowns());
 		ListIterator<Town> townItr = towns.listIterator();
@@ -46,12 +45,12 @@ public class UpdateTownNeutralityCounters {
 				town.flipNeutral();
 			
 				if(town.isNeutral()) {
-					TownyMessaging.sendGlobalMessage(
-						String.format(TownySettings.getLangString("msg_siege_war_town_became_neutral"), 
+					Messages.sendGlobalMessage(
+						String.format(Settings.getLangString("msg_siege_war_town_became_neutral"), 
 						town.getFormattedName()));
 				} else {
-					TownyMessaging.sendGlobalMessage(
-						String.format(TownySettings.getLangString("msg_siege_war_town_became_non_neutral"),
+					Messages.sendGlobalMessage(
+						String.format(Settings.getLangString("msg_siege_war_town_became_non_neutral"),
 						town.getFormattedName()));
 				}
 			}

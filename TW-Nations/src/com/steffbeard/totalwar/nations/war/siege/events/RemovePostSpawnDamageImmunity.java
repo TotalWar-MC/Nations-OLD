@@ -1,10 +1,11 @@
 package com.steffbeard.totalwar.nations.war.siege.events;
 
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownyUniverse;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.util.BukkitTools;
 import org.bukkit.entity.Player;
+
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.util.BukkitTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class RemovePostSpawnDamageImmunity {
 	 * It determines which players are currently damage immune, but have reached the immunity time limit - then removes the immunity
 	 */
     public static void removePostSpawnDamageImmunity() {
-		TownyUniverse universe = TownyUniverse.getInstance();
+		NationsUniverse universe = NationsUniverse.getInstance();
 		List<Player> onlinePlayers = new ArrayList<>(BukkitTools.getOnlinePlayers());
 		ListIterator<Player> playerItr = onlinePlayers.listIterator();
 		Player player;
@@ -41,7 +42,7 @@ public class RemovePostSpawnDamageImmunity {
 					}
 				}
 			} catch (Exception e) {
-				TownyMessaging.sendErrorMsg("Problem removing immunity from player " + player.getName());
+				Messages.sendErrorMsg("Problem removing immunity from player " + player.getName());
 				e.printStackTrace();
 			}
 		}

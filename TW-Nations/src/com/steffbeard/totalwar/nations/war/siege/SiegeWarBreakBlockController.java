@@ -4,6 +4,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+
 /**
  * This class intercepts 'break block' events coming from the towny block listener class
  *
@@ -26,7 +29,7 @@ public class SiegeWarBreakBlockController {
 	public static boolean evaluateSiegeWarBreakBlockRequest(Player player, Block block, BlockBreakEvent event)  {
 		if (SiegeWarBlockUtil.isBlockNearAnActiveSiegeBanner(block)) {
 			event.setCancelled(true);
-			TownyMessaging.sendErrorMsg(player, TownySettings.getLangString("msg_err_siege_war_cannot_destroy_siege_banner"));
+			Messages.sendErrorMsg(player, Settings.getLangString("msg_err_siege_war_cannot_destroy_siege_banner"));
 			return true;
 		} else {
 			return false;

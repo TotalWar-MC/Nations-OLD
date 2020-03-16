@@ -26,8 +26,8 @@ import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.Coord;
 import com.steffbeard.totalwar.nations.util.StringMgmt;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
+import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
 import com.steffbeard.totalwar.nations.war.siege.SiegeWarMembershipController;
-import com.steffbeard.totalwar.nations.war.siege.enums.SiegeStatus;
 import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
 
 import org.bukkit.Bukkit;

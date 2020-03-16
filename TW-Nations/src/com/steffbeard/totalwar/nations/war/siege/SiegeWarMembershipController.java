@@ -1,5 +1,9 @@
 package com.steffbeard.totalwar.nations.war.siege;
 
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 
 /**
  * This class intercepts 'remove' requests, where a resident is removed from a town,
@@ -18,7 +22,7 @@ public class SiegeWarMembershipController {
 	 *  
 	 */
 	public static void evaluateTownRemoveResident(Resident resident) {
-		SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, TownySettings.getLangString("msg_siege_war_resident_leave_town"));
+		SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, Settings.getLangString("msg_siege_war_resident_leave_town"));
 	}
 	
 	/**
@@ -29,7 +33,7 @@ public class SiegeWarMembershipController {
 	 */
 	public static void evaluateNationRemoveTown(Town town) {
 		for (Resident resident : town.getResidents()) {
-				SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, TownySettings.getLangString("msg_siege_war_town_leave_nation"));
+				SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, Settings.getLangString("msg_siege_war_town_leave_nation"));
 		}
 	}
 
@@ -41,10 +45,10 @@ public class SiegeWarMembershipController {
 	 */
 	public static void evaluateNationRemoveAlly(Nation nation, Nation ally) {
 		for (Resident resident : nation.getResidents()) {
-			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, TownySettings.getLangString("msg_siege_war_ally_removed"));
+			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, Settings.getLangString("msg_siege_war_ally_removed"));
 		}
 		for (Resident resident : ally.getResidents()) {
-			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, TownySettings.getLangString("msg_siege_war_ally_removed"));
+			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, Settings.getLangString("msg_siege_war_ally_removed"));
 		}
 	}
 

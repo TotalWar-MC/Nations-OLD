@@ -2,7 +2,6 @@ package com.steffbeard.totalwar.nations.war.siege;
 
 import org.bukkit.entity.Player;
 
-import com.steffbeard.totalwar.nations.war.siege.enums.SiegeStatus;
 import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
 
 /**

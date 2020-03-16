@@ -1,4 +1,4 @@
-package com.steffbeard.totalwar.nations.war.siege.enums;
+package com.steffbeard.totalwar.nations.war.siege;
 
 /**
  * This class represents the "status" of a siege
