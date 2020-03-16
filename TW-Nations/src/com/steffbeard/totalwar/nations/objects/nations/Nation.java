@@ -5,6 +5,9 @@ import com.steffbeard.totalwar.nations.config.ConfigNodes;
 import com.steffbeard.totalwar.nations.config.Messages;
 import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.economy.EconomyAccount;
+import com.steffbeard.totalwar.nations.events.nation.NationAddTownEvent;
+import com.steffbeard.totalwar.nations.events.nation.NationRemoveTownEvent;
+import com.steffbeard.totalwar.nations.events.nation.NationTagChangeEvent;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.EconomyException;
 import com.steffbeard.totalwar.nations.exceptions.EmptyNationException;
@@ -23,8 +26,8 @@ import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 import com.steffbeard.totalwar.nations.permissions.NationsPerms;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.Coord;
-import com.steffbeard.totalwar.nations.util.StringMgmt;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
+import com.steffbeard.totalwar.nations.util.file.StringMgmt;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
 import com.steffbeard.totalwar.nations.war.siege.SiegeWarMembershipController;
@@ -499,19 +502,19 @@ public class Nation extends NationsObject implements ResidentList, NationsInvite
 		}
 	}
 
-	public void setNeutral(boolean neutral) throws NationsException {
-
-		if (!Settings.isDeclaringNeutral() && neutral)
-			throw new NationsException(Settings.getLangString("msg_err_fight_like_king"));
-		else {
-			if (neutral) {
-				for (Resident resident : getResidents()) {
-					NationsWar.removeAttackerFlags(resident.getName());
-				}
-			}
-			this.neutral = neutral;
-		}
-	}
+//	public void setNeutral(boolean neutral) throws NationsException {
+//
+//		if (!Settings.isDeclaringNeutral() && neutral)
+//			throw new NationsException(Settings.getLangString("msg_err_fight_like_king"));
+//		else {
+//			if (neutral) {
+//				for (Resident resident : getResidents()) {
+//					NationsWar.removeAttackerFlags(resident.getName());
+//				}
+//			}
+//			this.neutral = neutral;
+//		}
+//	}
 
 	public boolean isNeutral() {
 

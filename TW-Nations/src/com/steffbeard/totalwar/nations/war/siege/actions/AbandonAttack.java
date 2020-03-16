@@ -10,7 +10,7 @@ import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
-import com.steffbeard.totalwar.nations.util.TimeMgmt;
+import com.steffbeard.totalwar.nations.util.time.TimeMgmt;
 import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
 import com.steffbeard.totalwar.nations.war.siege.location.Siege;
 import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;

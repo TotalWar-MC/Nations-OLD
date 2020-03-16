@@ -11,7 +11,7 @@ import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
-import com.steffbeard.totalwar.nations.util.Coord;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 
 import java.util.ArrayList;

@@ -19,10 +19,10 @@ import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 import com.steffbeard.totalwar.nations.permissions.NationsPermissionSource;
 import com.steffbeard.totalwar.nations.permissions.NationsPerms;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.Coord;
-import com.steffbeard.totalwar.nations.util.FileMgmt;
-import com.steffbeard.totalwar.nations.util.Trie;
-import com.steffbeard.totalwar.nations.util.WorldCoord;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
+import com.steffbeard.totalwar.nations.util.coord.WorldCoord;
+import com.steffbeard.totalwar.nations.util.file.FileMgmt;
+import com.steffbeard.totalwar.nations.util.file.Trie;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
 

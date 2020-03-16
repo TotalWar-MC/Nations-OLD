@@ -6,7 +6,7 @@ import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 import com.steffbeard.totalwar.nations.objects.town.TownBlockOwner;
-import com.steffbeard.totalwar.nations.util.Colors;
+import com.steffbeard.totalwar.nations.util.file.Colors;
 
 public class Permission {
 	public enum ActionType {

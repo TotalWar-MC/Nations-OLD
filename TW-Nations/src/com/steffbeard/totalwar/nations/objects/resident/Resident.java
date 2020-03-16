@@ -10,6 +10,8 @@ import com.steffbeard.totalwar.nations.config.Messages;
 import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.confirmations.ConfirmationType;
 import com.steffbeard.totalwar.nations.economy.EconomyAccount;
+import com.steffbeard.totalwar.nations.events.town.TownAddResidentRankEvent;
+import com.steffbeard.totalwar.nations.events.town.TownRemoveResidentRankEvent;
 import com.steffbeard.totalwar.nations.exceptions.AlreadyRegisteredException;
 import com.steffbeard.totalwar.nations.exceptions.EmptyTownException;
 import com.steffbeard.totalwar.nations.exceptions.NationsException;
@@ -26,7 +28,7 @@ import com.steffbeard.totalwar.nations.objects.town.TownBlockOwner;
 import com.steffbeard.totalwar.nations.permissions.NationsPerms;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.StringMgmt;
+import com.steffbeard.totalwar.nations.util.file.StringMgmt;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 import com.steffbeard.totalwar.nations.war.siege.SiegeWarRankController;
 

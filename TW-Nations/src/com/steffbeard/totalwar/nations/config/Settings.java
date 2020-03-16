@@ -19,11 +19,12 @@ import com.steffbeard.totalwar.nations.permissions.Permission.ActionType;
 import com.steffbeard.totalwar.nations.permissions.Permission.PermLevel;
 import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.FileMgmt;
-import com.steffbeard.totalwar.nations.util.NameValidation;
-import com.steffbeard.totalwar.nations.util.StringMgmt;
-import com.steffbeard.totalwar.nations.util.TimeTools;
-import com.steffbeard.totalwar.nations.util.WorldCoord;
+import com.steffbeard.totalwar.nations.util.chunk.ChunkNotification;
+import com.steffbeard.totalwar.nations.util.coord.WorldCoord;
+import com.steffbeard.totalwar.nations.util.file.FileMgmt;
+import com.steffbeard.totalwar.nations.util.file.StringMgmt;
+import com.steffbeard.totalwar.nations.util.player.NameValidation;
+import com.steffbeard.totalwar.nations.util.time.TimeTools;
 
 import java.io.File;
 import java.io.IOException;
@@ -269,7 +270,7 @@ public class Settings {
 		loadNationLevelConfig();
 
 		// Load allowed blocks in warzone.
-		NationsWarConfig.setEditableMaterialsInWarZone(getAllowedMaterials(ConfigNodes.WAR_WARZONE_EDITABLE_MATERIALS));
+//		NationsWarConfig.setEditableMaterialsInWarZone(getAllowedMaterials(ConfigNodes.WAR_WARZONE_EDITABLE_MATERIALS));
 
 		ChunkNotification.loadFormatStrings();
 	}

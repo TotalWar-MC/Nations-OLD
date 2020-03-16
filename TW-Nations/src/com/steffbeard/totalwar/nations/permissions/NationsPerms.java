@@ -15,7 +15,7 @@ import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.FileMgmt;
+import com.steffbeard.totalwar.nations.util.file.FileMgmt;
 
 import java.io.File;
 import java.lang.reflect.Field;

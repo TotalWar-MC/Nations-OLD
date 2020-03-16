@@ -1,16 +1,20 @@
 package com.steffbeard.totalwar.nations.war.siege.actions;
 
-import com.palmergames.bukkit.towny.*;
-import com.palmergames.bukkit.towny.exceptions.EconomyException;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.permissions.PermissionNodes;
-import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
-import com.palmergames.bukkit.towny.war.siegewar.locations.Siege;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
+
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.economy.NationsEconomyHandler;
+import com.steffbeard.totalwar.nations.exceptions.EconomyException;
+import com.steffbeard.totalwar.nations.exceptions.NationsException;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
+import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
+import com.steffbeard.totalwar.nations.war.siege.location.Siege;
 
 /**
  * This class is responsible for processing requests to plunder towns
@@ -32,43 +36,43 @@ public class PlunderTown {
 												 Town townToBePlundered,
 												 BlockPlaceEvent event) {
         try {
-			if(!TownySettings.isUsingEconomy())
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_plunder_without_economy"));
+			if(!Settings.isUsingEconomy())
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_plunder_without_economy"));
 
-			if(TownySettings.getWarSiegeTownNeutralityEnabled() && townToBePlundered.isNeutral())
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_neutral_town_cannot_plunder"));
+			if(Settings.getWarSiegeTownNeutralityEnabled() && townToBePlundered.isNeutral())
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_neutral_town_cannot_plunder"));
 			
-			TownyUniverse universe = TownyUniverse.getInstance();
+			NationsUniverse universe = NationsUniverse.getInstance();
 			Resident resident = universe.getDataSource().getResident(player.getName());
 			if(!resident.hasTown())
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_action_not_a_town_member"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_action_not_a_town_member"));
 
 			Town townOfPlunderingResident = resident.getTown();
 			if(!townOfPlunderingResident.hasNation())
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_action_not_a_nation_member"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_action_not_a_nation_member"));
 			
 			if (!universe.getPermissionSource().testPermission(player, PermissionNodes.TOWNY_NATION_SIEGE_PLUNDER.getNode()))
-                throw new TownyException(TownySettings.getLangString("msg_err_command_disable"));
+                throw new NationsException(Settings.getLangString("msg_err_command_disable"));
 
 			if(townOfPlunderingResident == townToBePlundered)
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_plunder_own_town"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_plunder_own_town"));
 
 			Siege siege = townToBePlundered.getSiege();
 			if (siege.getStatus() != SiegeStatus.ATTACKER_WIN && siege.getStatus() != SiegeStatus.DEFENDER_SURRENDER)
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_plunder_without_victory"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_plunder_without_victory"));
 			
 			if(townOfPlunderingResident.getNation() != siege.getAttackerWinner())
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_plunder_without_victory"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_plunder_without_victory"));
 			
             if(siege.isTownPlundered())
-                throw new TownyException(String.format(TownySettings.getLangString("msg_err_siege_war_town_already_plundered"), townToBePlundered.getName()));
+                throw new NationsException(String.format(Settings.getLangString("msg_err_siege_war_town_already_plundered"), townToBePlundered.getName()));
 
             plunderTown(siege, townToBePlundered, siege.getAttackerWinner(), event);
             
-        } catch (TownyException x) {
+        } catch (NationsException x) {
             event.setBuild(false);
         	event.setCancelled(true);
-            TownyMessaging.sendErrorMsg(player, x.getMessage());
+            Messages.sendErrorMsg(player, x.getMessage());
         }
     }
 
@@ -76,10 +80,10 @@ public class PlunderTown {
         siege.setTownPlundered(true);
 
         double fullPlunderAmount =
-                TownySettings.getWarSiegeAttackerPlunderAmountPerPlot()
+                Settings.getWarSiegeAttackerPlunderAmountPerPlot()
                         * defendingTown.getTownBlocks().size();
         try {
-			TownyUniverse universe = TownyUniverse.getInstance();
+			NationsUniverse universe = NationsUniverse.getInstance();
 			
 			if (defendingTown.getAccount().canPayFromHoldings(fullPlunderAmount)) {
                 defendingTown.getAccount().payTo(fullPlunderAmount, winnerNation, "Town was plundered by attacker");
@@ -89,9 +93,9 @@ public class PlunderTown {
                 double actualPlunderAmount = defendingTown.getAccount().getHoldingBalance();
                 defendingTown.getAccount().payTo(actualPlunderAmount, winnerNation, "Town was plundered by attacker");
                 sendPlunderSuccessMessage(defendingTown, winnerNation, actualPlunderAmount);
-                TownyMessaging.sendGlobalMessage(
+                Messages.sendGlobalMessage(
                 	String.format(
-						TownySettings.getLangString("msg_siege_war_town_ruined_from_plunder"),
+						Settings.getLangString("msg_siege_war_town_ruined_from_plunder"),
 						defendingTown.getFormattedName(),
 						winnerNation.getFormattedName()));
 				universe.getDataSource().removeTown(defendingTown);
@@ -99,24 +103,24 @@ public class PlunderTown {
         } catch (EconomyException x) {
 			event.setBuild(false);
 			event.setCancelled(true);
-            TownyMessaging.sendErrorMsg(x.getMessage());
+            Messages.sendErrorMsg(x.getMessage());
         }
     }
 
     private static void sendPlunderSuccessMessage(Town defendingTown, Nation winnerNation, double plunderAmount) {
         //Same messages for now but may diverge in future (if we decide to track the original nation of the town)
     	if(defendingTown.hasNation()) {
-			TownyMessaging.sendGlobalMessage(String.format(
-					TownySettings.getLangString("msg_siege_war_nation_town_plundered"),
+			Messages.sendGlobalMessage(String.format(
+					Settings.getLangString("msg_siege_war_nation_town_plundered"),
 					defendingTown.getFormattedName(),
-					TownyEconomyHandler.getFormattedBalance(plunderAmount),
+					NationsEconomyHandler.getFormattedBalance(plunderAmount),
 					winnerNation.getFormattedName()
 			));
         } else {
-            TownyMessaging.sendGlobalMessage(String.format(
-                    TownySettings.getLangString("msg_siege_war_neutral_town_plundered"),
+            Messages.sendGlobalMessage(String.format(
+                    Settings.getLangString("msg_siege_war_neutral_town_plundered"),
                     defendingTown.getFormattedName(),
-   				    TownyEconomyHandler.getFormattedBalance(plunderAmount),
+   				    NationsEconomyHandler.getFormattedBalance(plunderAmount),
                     winnerNation.getFormattedName()
 			));
         }

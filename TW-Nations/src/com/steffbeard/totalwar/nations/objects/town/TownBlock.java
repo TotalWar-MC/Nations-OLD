@@ -13,8 +13,8 @@ import com.steffbeard.totalwar.nations.objects.NationsWorld;
 import com.steffbeard.totalwar.nations.objects.PlotGroup;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.permissions.Permission;
-import com.steffbeard.totalwar.nations.util.Coord;
-import com.steffbeard.totalwar.nations.util.WorldCoord;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
+import com.steffbeard.totalwar.nations.util.coord.WorldCoord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 
 import java.util.HashSet;

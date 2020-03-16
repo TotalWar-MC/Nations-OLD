@@ -23,9 +23,9 @@ import com.steffbeard.totalwar.nations.exceptions.NationsException;
 import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
 import com.steffbeard.totalwar.nations.objects.resident.Resident;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.Coord;
-import com.steffbeard.totalwar.nations.util.PlayerCache;
-import com.steffbeard.totalwar.nations.util.WorldCoord;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
+import com.steffbeard.totalwar.nations.util.coord.WorldCoord;
+import com.steffbeard.totalwar.nations.util.player.PlayerCache;
 
 public class Main extends JavaPlugin {
 	private static final Logger LOGGER = LogManager.getLogger(Main.class);

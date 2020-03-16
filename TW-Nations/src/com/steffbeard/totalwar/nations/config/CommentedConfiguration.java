@@ -8,7 +8,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 
-import com.steffbeard.totalwar.nations.util.FileMgmt;
+import com.steffbeard.totalwar.nations.util.file.FileMgmt;
 
 import java.io.File;
 import java.io.IOException;

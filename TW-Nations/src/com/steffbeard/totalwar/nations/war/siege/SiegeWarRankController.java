@@ -1,5 +1,9 @@
 package com.steffbeard.totalwar.nations.war.siege;
 
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.permissions.NationsPerms;
+import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
 
 /**
  * This class intercepts 'remove rank' requests, where a resident's rank is removed.
@@ -18,8 +22,8 @@ public class SiegeWarRankController {
 	 *  
 	 */
 	public static void evaluateTownRemoveRank(Resident resident, String rank) {
-		if(TownyPerms.getTownRank(rank).contains(PermissionNodes.TOWNY_TOWN_SIEGE_POINTS.getNode())) {
-			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, TownySettings.getLangString("msg_siege_war_resident_town_rank_removed"));
+		if(NationsPerms.getTownRank(rank).contains(PermissionNodes.TOWNY_TOWN_SIEGE_POINTS.getNode())) {
+			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, Settings.getLangString("msg_siege_war_resident_town_rank_removed"));
 		}
 	}
 	
@@ -31,8 +35,8 @@ public class SiegeWarRankController {
 	 *
 	 */
 	public static void evaluateNationRemoveRank(Resident resident, String rank) {
-		if(TownyPerms.getNationRank(rank).contains(PermissionNodes.TOWNY_NATION_SIEGE_POINTS.getNode())) {
-			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, TownySettings.getLangString("msg_siege_war_resident_nation_rank_removed"));
+		if(NationsPerms.getNationRank(rank).contains(PermissionNodes.TOWNY_NATION_SIEGE_POINTS.getNode())) {
+			SiegeWarPointsUtil.evaluateSiegePenaltyPoints(resident, Settings.getLangString("msg_siege_war_resident_nation_rank_removed"));
 		}
 	}
 	

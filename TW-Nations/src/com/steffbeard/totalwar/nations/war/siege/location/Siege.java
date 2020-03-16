@@ -1,5 +1,7 @@
 package com.steffbeard.totalwar.nations.war.siege.location;
 
+import static com.steffbeard.totalwar.nations.util.time.TimeMgmt.ONE_HOUR_IN_MILLIS;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,10 +10,8 @@ import java.util.Map;
 import com.steffbeard.totalwar.nations.config.Settings;
 import com.steffbeard.totalwar.nations.objects.nations.Nation;
 import com.steffbeard.totalwar.nations.objects.town.Town;
-import com.steffbeard.totalwar.nations.util.TimeMgmt;
+import com.steffbeard.totalwar.nations.util.time.TimeMgmt;
 import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
-
-import static com.steffbeard.totalwar.nations.util.TimeMgmt.ONE_HOUR_IN_MILLIS;
 
 /**
  * This class represents a "Siege".

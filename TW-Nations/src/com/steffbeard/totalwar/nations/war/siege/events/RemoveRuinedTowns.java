@@ -1,13 +1,12 @@
 package com.steffbeard.totalwar.nations.war.siege.events;
 
-import com.palmergames.bukkit.towny.TownyFormatter;
-import com.palmergames.bukkit.towny.TownyMessaging;
-import com.palmergames.bukkit.towny.TownyUniverse;
-import com.palmergames.bukkit.towny.object.Town;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.objects.town.Town;
 
 /**
  * This class is responsible for removing ruined towns completely
@@ -21,7 +20,7 @@ public class RemoveRuinedTowns {
 	 * It determines which towns have lain in ruins for long enough, and deletes them.
 	 */
     public static void deleteRuinedTowns() {
-		TownyUniverse townyUniverse = TownyUniverse.getInstance();
+		NationsUniverse townyUniverse = NationsUniverse.getInstance();
 		List<Town> towns = new ArrayList<>(townyUniverse.getDataSource().getTowns());
 		ListIterator<Town> townItr = towns.listIterator();
 		Town town;
@@ -40,7 +39,7 @@ public class RemoveRuinedTowns {
 						//Ruin found & recently ruined end time reached. Delete town now.
 						townyUniverse.getDataSource().removeTown(town, false);
 					} catch (Exception e){
-						TownyMessaging.sendErrorMsg("Problem deleting ruined town " + town.getName());
+						Messages.sendErrorMsg("Problem deleting ruined town " + town.getName());
 						e.printStackTrace();
 					}
 				}

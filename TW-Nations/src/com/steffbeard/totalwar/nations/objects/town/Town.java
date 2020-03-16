@@ -27,10 +27,10 @@ import com.steffbeard.totalwar.nations.objects.resident.ResidentList;
 import com.steffbeard.totalwar.nations.permissions.NationsPerms;
 import com.steffbeard.totalwar.nations.permissions.Permission;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.Coord;
-import com.steffbeard.totalwar.nations.util.StringMgmt;
-import com.steffbeard.totalwar.nations.util.TimeMgmt;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
+import com.steffbeard.totalwar.nations.util.file.StringMgmt;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
+import com.steffbeard.totalwar.nations.util.time.TimeMgmt;
 import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
 import com.steffbeard.totalwar.nations.war.siege.SiegeWarMembershipController;
 import com.steffbeard.totalwar.nations.war.siege.location.Siege;
@@ -101,7 +101,7 @@ public class Town extends NationsObject implements ResidentList, NationsInviter,
 		recentlyRuinedEndTime = 0;
 		revoltImmunityEndTime = 0;
 		siegeImmunityEndTime = System.currentTimeMillis()
-			+ (long)(Settings.getWarSiegeSiegeImmunityTimeNewTownsHours() * com.steffbeard.totalwar.nations.util.TimeMgmt.ONE_HOUR_IN_MILLIS);
+			+ (long)(Settings.getWarSiegeSiegeImmunityTimeNewTownsHours() * com.steffbeard.totalwar.nations.util.time.TimeMgmt.ONE_HOUR_IN_MILLIS);
 		siege = null;
 		occupied = false;
 		neutral = false;

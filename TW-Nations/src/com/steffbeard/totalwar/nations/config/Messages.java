@@ -16,7 +16,7 @@ import com.steffbeard.totalwar.nations.objects.resident.ResidentList;
 import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
 import com.steffbeard.totalwar.nations.util.ChatTools;
-import com.steffbeard.totalwar.nations.util.Colors;
+import com.steffbeard.totalwar.nations.util.file.Colors;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

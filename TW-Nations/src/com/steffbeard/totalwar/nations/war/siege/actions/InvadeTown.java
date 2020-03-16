@@ -1,21 +1,21 @@
 package com.steffbeard.totalwar.nations.war.siege.actions;
 
-import com.palmergames.bukkit.towny.*;
-import com.palmergames.bukkit.towny.exceptions.AlreadyRegisteredException;
-import com.palmergames.bukkit.towny.exceptions.EmptyNationException;
-import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
-import com.palmergames.bukkit.towny.exceptions.TownyException;
-import com.palmergames.bukkit.towny.exceptions.EconomyException;
-import com.palmergames.bukkit.towny.object.Coord;
-import com.palmergames.bukkit.towny.object.Nation;
-import com.palmergames.bukkit.towny.object.Resident;
-import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.permissions.PermissionNodes;
-import com.palmergames.bukkit.towny.war.siegewar.utils.SiegeWarTimeUtil;
-import com.palmergames.bukkit.towny.war.siegewar.enums.SiegeStatus;
-import com.palmergames.bukkit.towny.war.siegewar.locations.Siege;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
+
+import com.steffbeard.totalwar.nations.Main;
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.exceptions.NationsException;
+import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
+import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
+import com.steffbeard.totalwar.nations.war.siege.location.Siege;
 
 /**
  * This class is responsible for processing requests to invade towns
@@ -34,67 +34,67 @@ public class InvadeTown {
 	 * @param townToBeInvaded the town to be invaded
 	 * @param event the place block event
 	 */
-    public static void processInvadeTownRequest(Towny plugin,
+    public static void processInvadeTownRequest(Main plugin,
                                                 Player player,
                                                 Town townToBeInvaded,
                                                 BlockPlaceEvent event) {
         try {
-			TownyUniverse universe = TownyUniverse.getInstance();
+			NationsUniverse universe = NationsUniverse.getInstance();
 			Resident resident = universe.getDataSource().getResident(player.getName());
 			Town townOfInvadingResident = resident.getTown();
 
 			if (!universe.getPermissionSource().testPermission(player, PermissionNodes.TOWNY_NATION_SIEGE_INVADE.getNode()))
-				throw new TownyException(TownySettings.getLangString("msg_err_command_disable"));
+				throw new NationsException(Settings.getLangString("msg_err_command_disable"));
 
 			if(townOfInvadingResident == townToBeInvaded)
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_invade_own_town"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_invade_own_town"));
 
 			Siege siege = townToBeInvaded.getSiege();
 			if (siege.getStatus() != SiegeStatus.ATTACKER_WIN && siege.getStatus() != SiegeStatus.DEFENDER_SURRENDER)
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_invade_without_victory"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_invade_without_victory"));
 
 			Nation nationOfInvadingResident = townOfInvadingResident.getNation();
 			Nation attackerWinner = siege.getAttackerWinner();
 			
 			if (nationOfInvadingResident != attackerWinner)
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_invade_without_victory"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_invade_without_victory"));
 
             if (siege.isTownInvaded())
-                throw new TownyException(String.format(TownySettings.getLangString("msg_err_siege_war_town_already_invaded"), townToBeInvaded.getName()));
+                throw new NationsException(String.format(Settings.getLangString("msg_err_siege_war_town_already_invaded"), townToBeInvaded.getName()));
 
 			if(townToBeInvaded.hasNation() && townToBeInvaded.getNation() == attackerWinner)
-				throw new TownyException(String.format(TownySettings.getLangString("msg_err_siege_war_town_already_belongs_to_your_nation"), townToBeInvaded.getName()));
+				throw new NationsException(String.format(Settings.getLangString("msg_err_siege_war_town_already_belongs_to_your_nation"), townToBeInvaded.getName()));
 
-			if (TownySettings.getNationRequiresProximity() > 0) {
+			if (Settings.getNationRequiresProximity() > 0) {
 				Coord capitalCoord = attackerWinner.getCapital().getHomeBlock().getCoord();
 				Coord townCoord = townToBeInvaded.getHomeBlock().getCoord();
 				if (!attackerWinner.getCapital().getHomeBlock().getWorld().getName().equals(townToBeInvaded.getHomeBlock().getWorld().getName())) {
-					throw new TownyException(TownySettings.getLangString("msg_err_nation_homeblock_in_another_world"));
+					throw new NationsException(Settings.getLangString("msg_err_nation_homeblock_in_another_world"));
 				}
 				double distance;
 				distance = Math.sqrt(Math.pow(capitalCoord.getX() - townCoord.getX(), 2) + Math.pow(capitalCoord.getZ() - townCoord.getZ(), 2));
-				if (distance > TownySettings.getNationRequiresProximity()) {
-					throw new TownyException(String.format(TownySettings.getLangString("msg_err_town_not_close_enough_to_nation"), townToBeInvaded.getName()));
+				if (distance > Settings.getNationRequiresProximity()) {
+					throw new NationsException(String.format(Settings.getLangString("msg_err_town_not_close_enough_to_nation"), townToBeInvaded.getName()));
 				}
 			}
 
-			if (TownySettings.getMaxTownsPerNation() > 0) {
-				if (attackerWinner.getTowns().size() >= TownySettings.getMaxTownsPerNation()){
-					throw new TownyException(String.format(TownySettings.getLangString("msg_err_nation_over_town_limit"), TownySettings.getMaxTownsPerNation()));
+			if (Settings.getMaxTownsPerNation() > 0) {
+				if (attackerWinner.getTowns().size() >= Settings.getMaxTownsPerNation()){
+					throw new NationsException(String.format(Settings.getLangString("msg_err_nation_over_town_limit"), Settings.getMaxTownsPerNation()));
 				}
 			}
 
 			captureTown(plugin, siege, attackerWinner, townToBeInvaded);
 
-        } catch (TownyException x) {
+        } catch (NationsException x) {
 			event.setBuild(false);
 			event.setCancelled(true);
-            TownyMessaging.sendErrorMsg(player, x.getMessage());
+            Messages.sendErrorMsg(player, x.getMessage());
         }
     }
 
-    private static void captureTown(Towny plugin, Siege siege, Nation attackingNation, Town defendingTown) {
-		TownyUniverse universe = TownyUniverse.getInstance();
+    private static void captureTown(Main plugin, Siege siege, Nation attackingNation, Town defendingTown) {
+		NationsUniverse universe = NationsUniverse.getInstance();
 
 		siege.setTownInvaded(true);
 
@@ -113,24 +113,24 @@ public class InvadeTown {
 
             universe.getDataSource().addTownToNation(plugin, defendingTown, attackingNation);
 
-            TownyMessaging.sendGlobalMessage(String.format(
-                    TownySettings.getLangString("msg_siege_war_nation_town_captured"),
+            Messages.sendGlobalMessage(String.format(
+                    Settings.getLangString("msg_siege_war_nation_town_captured"),
                     defendingTown.getFormattedName(),
                     nationOfDefendingTown.getFormattedName(),
                     attackingNation.getFormattedName()
             ));
 
             if(nationOfDefendingTown.getTowns().size() == 0) {
-                TownyMessaging.sendGlobalMessage(String.format(
-                        TownySettings.getLangString("msg_siege_war_nation_defeated"),
+                Messages.sendGlobalMessage(String.format(
+                        Settings.getLangString("msg_siege_war_nation_defeated"),
                         nationOfDefendingTown.getFormattedName()
                 ));
             }
         } else {
             universe.getDataSource().addTownToNation(plugin, defendingTown, attackingNation);
 
-            TownyMessaging.sendGlobalMessage(String.format(
-                    TownySettings.getLangString("msg_siege_war_neutral_town_captured"),
+            Messages.sendGlobalMessage(String.format(
+                    Settings.getLangString("msg_siege_war_neutral_town_captured"),
                     defendingTown.getFormattedName(),
                     attackingNation.getFormattedName()
             ));
@@ -139,6 +139,6 @@ public class InvadeTown {
 		defendingTown.setOccupied(true);
 
 		//Save the town to ensure data is saved even if only town/siege was updated
-		TownyUniverse.getInstance().getDataSource().saveTown(defendingTown);
+		NationsUniverse.getInstance().getDataSource().saveTown(defendingTown);
     }
 }

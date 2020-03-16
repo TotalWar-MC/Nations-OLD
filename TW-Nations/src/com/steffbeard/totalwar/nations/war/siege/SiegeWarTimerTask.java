@@ -3,11 +3,29 @@ package com.steffbeard.totalwar.nations.war.siege;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 
+import com.steffbeard.totalwar.nations.Main;
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.exceptions.NotRegisteredException;
+import com.steffbeard.totalwar.nations.objects.NationsObject;
+import com.steffbeard.totalwar.nations.objects.nations.Nation;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
+import com.steffbeard.totalwar.nations.util.BukkitTools;
+import com.steffbeard.totalwar.nations.war.siege.events.AttackerWin;
+import com.steffbeard.totalwar.nations.war.siege.events.DefenderWin;
+import com.steffbeard.totalwar.nations.war.siege.events.RemovePostSpawnDamageImmunity;
+import com.steffbeard.totalwar.nations.war.siege.events.RemoveRuinedTowns;
+import com.steffbeard.totalwar.nations.war.siege.location.Siege;
+import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
+
+import static com.steffbeard.totalwar.nations.util.time.TimeMgmt.ONE_MINUTE_IN_MILLIS;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import static com.steffbeard.totalwar.nations.util.TimeMgmt.ONE_MINUTE_IN_MILLIS;
 
 /**
  * This class represents the siegewar timer task
@@ -22,17 +40,17 @@ import static com.steffbeard.totalwar.nations.util.TimeMgmt.ONE_MINUTE_IN_MILLIS
  * 
  * @author Goosius
  */
-public class SiegeWarTimerTask extends TownyTimerTask {
+public class SiegeWarTimerTask extends NationsTimerTask {
 	private long nextRuinsRemovalsTick;
 
-	public SiegeWarTimerTask(Towny plugin) {
+	public SiegeWarTimerTask(Main plugin) {
 		super(plugin);
-		nextRuinsRemovalsTick = System.currentTimeMillis() + (long)(TownySettings.getWarSiegeRuinsRemovalsTickIntervalMinutes() * ONE_MINUTE_IN_MILLIS);
+		nextRuinsRemovalsTick = System.currentTimeMillis() + (long)(Settings.getWarSiegeRuinsRemovalsTickIntervalMinutes() * ONE_MINUTE_IN_MILLIS);
 	}
 
 	@Override
 	public void run() {
-		if (TownySettings.getWarSiegeEnabled()) {
+		if (Settings.getWarSiegeEnabled()) {
 			
 			evaluateSiegeZones();
 
@@ -48,7 +66,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 	 * Evaluate all siege zones
 	 */
 	private void evaluateSiegeZones() {
-		TownyUniverse universe = TownyUniverse.getInstance();
+		NationsUniverse universe = NationsUniverse.getInstance();
 		for(SiegeZone siegeZone: universe.getDataSource().getSiegeZones()) {
 			try {
 				evaluateSiegeZone(siegeZone);
@@ -70,10 +88,10 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 	 * Evaluate ruins removals
 	 */
 	public void evaluateRuinsRemovals() {
-		if(TownySettings.getWarSiegeDelayFullTownRemoval() && System.currentTimeMillis() > nextRuinsRemovalsTick) {
-			TownyMessaging.sendDebugMsg("Checking ruined towns now for deletion.");
+		if(Settings.getWarSiegeDelayFullTownRemoval() && System.currentTimeMillis() > nextRuinsRemovalsTick) {
+			Messages.sendDebugMsg("Checking ruined towns now for deletion.");
 			RemoveRuinedTowns.deleteRuinedTowns();
-			nextRuinsRemovalsTick = System.currentTimeMillis() + (long)(TownySettings.getWarSiegeRuinsRemovalsTickIntervalMinutes() * ONE_MINUTE_IN_MILLIS);
+			nextRuinsRemovalsTick = System.currentTimeMillis() + (long)(Settings.getWarSiegeRuinsRemovalsTickIntervalMinutes() * ONE_MINUTE_IN_MILLIS);
 		}
 	}
 
@@ -81,7 +99,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 	 * Evaluate post spawn damage immunity removals
 	 */
 	private void evaluatePostSpawnDamageImmunityRemovals() {
-		if(TownySettings.getWarSiegePostSpawnDamageImmunityEnabled()) {
+		if(Settings.getWarSiegePostSpawnDamageImmunityEnabled()) {
 			RemovePostSpawnDamageImmunity.removePostSpawnDamageImmunity();
 		}
 	}
@@ -101,7 +119,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 		if(siegeZone.getSiege().getStatus() != SiegeStatus.IN_PROGRESS) 
 			return;
 		
-		TownyUniverse universe = TownyUniverse.getInstance();
+		NationsUniverse universe = NationsUniverse.getInstance();
 		Resident resident;
 
 		//Cycle all online players
@@ -117,7 +135,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 					if(resident.getTown().isOccupied())
 						continue;
 
-					if (defencePointInstancesAwarded <= TownySettings.getWarSiegeMaxPlayersPerSideForTimedPoints()
+					if (defencePointInstancesAwarded <= Settings.getWarSiegeMaxPlayersPerSideForTimedPoints()
 						&& residentTown == siegeZone.getDefendingTown()
 						&& universe.getPermissionSource().testPermission(player, PermissionNodes.TOWNY_TOWN_SIEGE_POINTS.getNode())) {
 
@@ -126,7 +144,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 												player,
 												siegeZone,
 												siegeZone.getDefenderPlayerScoreTimeMap(),
-												-TownySettings.getWarSiegePointsForDefenderOccupation());
+												-Settings.getWarSiegePointsForDefenderOccupation());
 
 						if(defencePointsAwarded) {
 							defencePointInstancesAwarded++;
@@ -135,7 +153,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 					} else if (residentTown.hasNation()
 						&& universe.getPermissionSource().testPermission(player, PermissionNodes.TOWNY_NATION_SIEGE_POINTS.getNode())) {
 
-						if (defencePointInstancesAwarded <= TownySettings.getWarSiegeMaxPlayersPerSideForTimedPoints()
+						if (defencePointInstancesAwarded <= Settings.getWarSiegeMaxPlayersPerSideForTimedPoints()
 							    && siegeZone.getDefendingTown().hasNation()
 								&& siegeZone.getDefendingTown().getNation() == residentTown.getNation()) {
 
@@ -145,13 +163,13 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 													player,
 													siegeZone,
 													siegeZone.getDefenderPlayerScoreTimeMap(),
-													-TownySettings.getWarSiegePointsForDefenderOccupation());
+													-Settings.getWarSiegePointsForDefenderOccupation());
 
 							if(defencePointsAwarded) {
 								defencePointInstancesAwarded++;
 							}
 
-						} else if (attackPointInstancesAwarded <= TownySettings.getWarSiegeMaxPlayersPerSideForTimedPoints()
+						} else if (attackPointInstancesAwarded <= Settings.getWarSiegeMaxPlayersPerSideForTimedPoints()
 							&& siegeZone.getAttackingNation() 
 							== residentTown.getNation()) {
 
@@ -160,14 +178,14 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 													player,
 													siegeZone,
 													siegeZone.getAttackerPlayerScoreTimeMap(),
-													TownySettings.getWarSiegePointsForAttackerOccupation());
+													Settings.getWarSiegePointsForAttackerOccupation());
 
 							if(attackPointsAwarded) {
 								attackPointInstancesAwarded++;
 								pillagingPlayers.add(player);
 							}
 
-						} else if (defencePointInstancesAwarded <= TownySettings.getWarSiegeMaxPlayersPerSideForTimedPoints()
+						} else if (defencePointInstancesAwarded <= Settings.getWarSiegeMaxPlayersPerSideForTimedPoints()
 							&& siegeZone.getDefendingTown().hasNation()
 							&& siegeZone.getDefendingTown().getNation().hasMutualAlly(residentTown.getNation())) {
 
@@ -177,13 +195,13 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 													player,
 													siegeZone,
 													siegeZone.getDefenderPlayerScoreTimeMap(),
-													-TownySettings.getWarSiegePointsForDefenderOccupation());
+													-Settings.getWarSiegePointsForDefenderOccupation());
 
 							if(defencePointsAwarded) {
 								defencePointInstancesAwarded++;
 							}
 
-						} else if (attackPointInstancesAwarded <= TownySettings.getWarSiegeMaxPlayersPerSideForTimedPoints()
+						} else if (attackPointInstancesAwarded <= Settings.getWarSiegeMaxPlayersPerSideForTimedPoints()
 							&& siegeZone.getAttackingNation().hasMutualAlly(residentTown.getNation())) {
 
 							//Nation member of ally of attacking nation
@@ -192,7 +210,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 													player,
 													siegeZone,
 													siegeZone.getAttackerPlayerScoreTimeMap(),
-													TownySettings.getWarSiegePointsForAttackerOccupation());
+													Settings.getWarSiegePointsForAttackerOccupation());
 
 							if(attackPointsAwarded) {
 								attackPointInstancesAwarded++;
@@ -206,9 +224,9 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 		}
 
 		//Pillage
-		double maximumPillageAmount = TownySettings.getWarSiegeMaximumPillageAmountPerPlot() * siegeZone.getDefendingTown().getTownBlocks().size();
-		if(TownySettings.getWarSiegePillagingEnabled()
-			&& TownySettings.isUsingEconomy()
+		double maximumPillageAmount = Settings.getWarSiegeMaximumPillageAmountPerPlot() * siegeZone.getDefendingTown().getTownBlocks().size();
+		if(Settings.getWarSiegePillagingEnabled()
+			&& Settings.isUsingEconomy()
 			&& !siegeZone.getDefendingTown().isNeutral()
 			&& siegeZone.getDefendingTown().getSiege().getTotalPillageAmount() < maximumPillageAmount)
 		{
@@ -227,14 +245,14 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 	 * @param siege
 	 */
 	private static void evaluateSiege(Siege siege) {
-		TownyUniverse universe = TownyUniverse.getInstance();
+		NationsUniverse universe = NationsUniverse.getInstance();
 		
 		//Process active siege
 		if (siege.getStatus() == SiegeStatus.IN_PROGRESS) {
 
 			//If scheduled end time has arrived, choose winner
 			if (System.currentTimeMillis() > siege.getScheduledEndTime()) {
-				TownyObject siegeWinner = SiegeWarPointsUtil.calculateSiegeWinner(siege);
+				NationsObject siegeWinner = SiegeWarPointsUtil.calculateSiegeWinner(siege);
 				if (siegeWinner instanceof Town) {
 					DefenderWin.defenderWin(siege, (Town) siegeWinner);
 				} else {
@@ -242,7 +260,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 				}
 
 				//Save changes to db
-				TownyUniverse townyUniverse = TownyUniverse.getInstance();
+				NationsUniverse townyUniverse = NationsUniverse.getInstance();
 				townyUniverse.getDataSource().saveTown(siege.getDefendingTown());
 			}
 
@@ -306,7 +324,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 
 			//Player must not have been in zone too long (anti-afk feature)
 			if (System.currentTimeMillis() > siegeZone.getPlayerAfkTimeMap().get(player)) {
-				TownyMessaging.sendErrorMsg(player, TownySettings.getLangString("msg_err_siege_war_cannot_occupy_zone_for_too_long"));
+				Messages.sendErrorMsg(player, Settings.getLangString("msg_err_siege_war_cannot_occupy_zone_for_too_long"));
 				playerScoreTimeMap.remove(player);
 				return false;
 			}
@@ -343,7 +361,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 
 			siegeZone.getPlayerAfkTimeMap().put(player,
 					System.currentTimeMillis()
-							+ (long)(TownySettings.getWarSiegeZoneMaximumScoringDurationMinutes() * ONE_MINUTE_IN_MILLIS));
+							+ (long)(Settings.getWarSiegeZoneMaximumScoringDurationMinutes() * ONE_MINUTE_IN_MILLIS));
 
 			return false; //Player added to zone
 		}
@@ -356,7 +374,7 @@ public class SiegeWarTimerTask extends TownyTimerTask {
 	 */
 	private static List<Siege> getAllSieges() {
 		List<Siege> result = new ArrayList<>();
-		for(Town town: TownyUniverse.getInstance().getDataSource().getTowns()) {
+		for(Town town: NationsUniverse.getInstance().getDataSource().getTowns()) {
 			if(town.hasSiege()) {
 				result.add(town.getSiege());
 			}

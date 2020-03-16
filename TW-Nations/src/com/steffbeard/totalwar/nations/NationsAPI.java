@@ -20,8 +20,8 @@ import com.steffbeard.totalwar.nations.objects.town.Town;
 import com.steffbeard.totalwar.nations.objects.town.TownBlock;
 import com.steffbeard.totalwar.nations.permissions.NationsPermissionSource;
 import com.steffbeard.totalwar.nations.util.BukkitTools;
-import com.steffbeard.totalwar.nations.util.Coord;
-import com.steffbeard.totalwar.nations.util.WorldCoord;
+import com.steffbeard.totalwar.nations.util.coord.Coord;
+import com.steffbeard.totalwar.nations.util.coord.WorldCoord;
 import com.steffbeard.totalwar.nations.util.metadata.CustomDataField;
 
 import java.util.ArrayList;
