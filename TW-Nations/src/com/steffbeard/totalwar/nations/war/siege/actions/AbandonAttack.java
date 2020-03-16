@@ -3,6 +3,18 @@ package com.steffbeard.totalwar.nations.war.siege.actions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 
+import com.steffbeard.totalwar.nations.NationsUniverse;
+import com.steffbeard.totalwar.nations.config.Messages;
+import com.steffbeard.totalwar.nations.config.Settings;
+import com.steffbeard.totalwar.nations.exceptions.NationsException;
+import com.steffbeard.totalwar.nations.objects.resident.Resident;
+import com.steffbeard.totalwar.nations.objects.town.Town;
+import com.steffbeard.totalwar.nations.permissions.PermissionNodes;
+import com.steffbeard.totalwar.nations.util.TimeMgmt;
+import com.steffbeard.totalwar.nations.war.siege.SiegeStatus;
+import com.steffbeard.totalwar.nations.war.siege.location.Siege;
+import com.steffbeard.totalwar.nations.war.siege.location.SiegeZone;
+
 /**
  * This class is responsible for processing requests to Abandon siege attacks
  *
@@ -23,39 +35,39 @@ public class AbandonAttack {
 												  SiegeZone siegeZone,
 												  BlockPlaceEvent event)  {
         try {
-			TownyUniverse universe = TownyUniverse.getInstance();
+			NationsUniverse universe = NationsUniverse.getInstance();
             Resident resident = universe.getDataSource().getResident(player.getName());
             if(!resident.hasTown())
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_action_not_a_town_member"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_action_not_a_town_member"));
 
             Town townOfResident = resident.getTown();
             if(!townOfResident.hasNation())
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_action_not_a_nation_member"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_action_not_a_nation_member"));
 
             //If player has no permission to abandon,send error
             if (!universe.getPermissionSource().testPermission(player, PermissionNodes.TOWNY_NATION_SIEGE_ABANDON.getNode()))
-                throw new TownyException(TownySettings.getLangString("msg_err_command_disable"));
+                throw new NationsException(Settings.getLangString("msg_err_command_disable"));
             
             //If the siege is not in progress, send error
 			Siege siege = siegeZone.getSiege();
 			if (siege.getStatus() != SiegeStatus.IN_PROGRESS)
-				throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_abandon_siege_over"));
+				throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_abandon_siege_over"));
 			
 			//If the player's nation does not own the nearby siegezone, send error
             if(siegeZone.getAttackingNation() != townOfResident.getNation())
-                throw new TownyException(TownySettings.getLangString("msg_err_siege_war_cannot_abandon_nation_not_attacking_zone"));
+                throw new NationsException(Settings.getLangString("msg_err_siege_war_cannot_abandon_nation_not_attacking_zone"));
 
 			long timeUntilAbandonIsAllowedMillis = siege.getTimeUntilAbandonIsAllowedMillis();
 			if(timeUntilAbandonIsAllowedMillis > 0) {
-				String message = String.format(TownySettings.getLangString("msg_err_siege_war_cannot_abandon_yet"),
+				String message = String.format(Settings.getLangString("msg_err_siege_war_cannot_abandon_yet"),
 					TimeMgmt.getFormattedTimeValue(timeUntilAbandonIsAllowedMillis));
-				throw new TownyException(message);
+				throw new NationsException(message);
 			}
 
 			attackerAbandon(siegeZone);
 
-        } catch (TownyException x) {
-            TownyMessaging.sendErrorMsg(player, x.getMessage());
+        } catch (NationsException x) {
+            Messages.sendErrorMsg(player, x.getMessage());
 			event.setBuild(false);
             event.setCancelled(true);
         }
@@ -63,11 +75,11 @@ public class AbandonAttack {
 
     private static void attackerAbandon(SiegeZone siegeZone) {
         //Here we simply remove the siege zone
-		TownyUniverse universe = TownyUniverse.getInstance();
+		NationsUniverse universe = NationsUniverse.getInstance();
 		universe.getDataSource().removeSiegeZone(siegeZone);
         
-		TownyMessaging.sendGlobalMessage(
-			String.format(TownySettings.getLangString("msg_siege_war_attacker_abandon"),
+		Messages.sendGlobalMessage(
+			String.format(Settings.getLangString("msg_siege_war_attacker_abandon"),
 				siegeZone.getAttackingNation().getFormattedName(),
         		siegeZone.getDefendingTown().getFormattedName()));
 		
@@ -75,8 +87,8 @@ public class AbandonAttack {
             SiegeWarSiegeCompletionUtil.updateSiegeValuesToComplete(siegeZone.getSiege(),
                     SiegeStatus.ATTACKER_ABANDON,
                     null);
-			TownyMessaging.sendGlobalMessage(
-				String.format(TownySettings.getLangString("msg_siege_war_siege_abandon"),
+			Messages.sendGlobalMessage(
+				String.format(Settings.getLangString("msg_siege_war_siege_abandon"),
 					siegeZone.getDefendingTown().getFormattedName()));
 		}
 
